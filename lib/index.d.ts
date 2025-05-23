@@ -1,12 +1,12 @@
-import * as react4 from "react";
+import * as react1 from "react";
 import * as react12 from "react";
-import * as react13 from "react";
+import * as react8 from "react";
 import { Key, ReactElement, ReactNode, RefAttributes } from "react";
 import * as react_jsx_runtime0 from "react/jsx-runtime";
-import * as react_jsx_runtime8 from "react/jsx-runtime";
-import * as react_jsx_runtime10 from "react/jsx-runtime";
+import * as react_jsx_runtime13 from "react/jsx-runtime";
+import * as react_jsx_runtime9 from "react/jsx-runtime";
+import * as react_jsx_runtime4 from "react/jsx-runtime";
 import * as react_jsx_runtime5 from "react/jsx-runtime";
-import * as react_jsx_runtime3 from "react/jsx-runtime";
 import * as react_jsx_runtime6 from "react/jsx-runtime";
 
 //#region src/types.d.ts
@@ -447,7 +447,7 @@ declare function TreeDataGrid<R, SR = unknown, K extends Key = Key>({
 
 //#endregion
 //#region src/DataGridDefaultRenderersContext.d.ts
-declare const DataGridDefaultRenderersContext: react4.Context<Maybe<Renderers<any, any>>>;
+declare const DataGridDefaultRenderersContext: react1.Context<Maybe<Renderers<any, any>>>;
 
 //#endregion
 //#region src/Row.d.ts
@@ -468,17 +468,17 @@ declare function renderCheckbox({
   onChange,
   indeterminate,
   ...props
-}: RenderCheckboxProps): react_jsx_runtime8.JSX.Element;
+}: RenderCheckboxProps): react_jsx_runtime13.JSX.Element;
 
 //#endregion
 //#region src/cellRenderers/renderToggleGroup.d.ts
-declare function renderToggleGroup<R, SR>(props: RenderGroupCellProps<R, SR>): react_jsx_runtime10.JSX.Element;
+declare function renderToggleGroup<R, SR>(props: RenderGroupCellProps<R, SR>): react_jsx_runtime9.JSX.Element;
 declare function ToggleGroup<R, SR>({
   groupKey,
   isExpanded,
   tabIndex,
   toggleGroup
-}: RenderGroupCellProps<R, SR>): react_jsx_runtime10.JSX.Element;
+}: RenderGroupCellProps<R, SR>): react_jsx_runtime9.JSX.Element;
 
 //#endregion
 //#region src/cellRenderers/renderValue.d.ts
@@ -498,7 +498,7 @@ declare function SelectCellFormatter({
   onChange,
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledBy
-}: SelectCellFormatterProps): react13.ReactNode;
+}: SelectCellFormatterProps): react8.ReactNode;
 
 //#endregion
 //#region src/editors/textEditor.d.ts
@@ -507,7 +507,7 @@ declare function textEditor<TRow, TSummaryRow>({
   column,
   onRowChange,
   onClose
-}: RenderEditCellProps<TRow, TSummaryRow>): react_jsx_runtime5.JSX.Element;
+}: RenderEditCellProps<TRow, TSummaryRow>): react_jsx_runtime4.JSX.Element;
 
 //#endregion
 //#region src/renderHeaderCell.d.ts
@@ -515,7 +515,7 @@ declare function renderHeaderCell<R, SR>({
   column,
   sortDirection,
   priority
-}: RenderHeaderCellProps<R, SR>): string | react_jsx_runtime3.JSX.Element;
+}: RenderHeaderCellProps<R, SR>): string | react_jsx_runtime5.JSX.Element;
 
 //#endregion
 //#region src/sortStatus.d.ts
