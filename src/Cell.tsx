@@ -1,4 +1,4 @@
-import { memo, forwardRef, type MouseEvent, type RefAttributes } from 'react';
+import { forwardRef, memo, type MouseEvent, type RefAttributes } from 'react';
 import { css } from '@linaria/core';
 
 import { useRovingTabIndex } from './hooks';
@@ -13,27 +13,28 @@ const cellDraggedOver = css`
 
 const cellDraggedOverClassname = `rdg-cell-dragged-over ${cellDraggedOver}`;
 
-function Cell<R, SR>({
-  column,
-  colSpan,
-  isCellSelected,
-  isDraggedOver,
-  row,
-  rowIdx,
-  className,
-  onMouseDown,
-  onCellMouseDown,
-  onClick,
-  onCellClick,
-  onDoubleClick,
-  onCellDoubleClick,
-  onContextMenu,
-  onCellContextMenu,
-  onRowChange,
-  selectCell,
-  style,
-  ...props
-}: CellRendererProps<R, SR>,
+function Cell<R, SR>(
+  {
+    column,
+    colSpan,
+    isCellSelected,
+    isDraggedOver,
+    row,
+    rowIdx,
+    className,
+    onMouseDown,
+    onCellMouseDown,
+    onClick,
+    onCellClick,
+    onDoubleClick,
+    onCellDoubleClick,
+    onContextMenu,
+    onCellContextMenu,
+    onRowChange,
+    selectCell,
+    style,
+    ...props
+  }: CellRendererProps<R, SR>,
   ref: React.Ref<HTMLDivElement>
 ) {
   const { tabIndex, childTabIndex, onFocus } = useRovingTabIndex(isCellSelected);

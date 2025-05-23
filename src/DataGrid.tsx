@@ -1,11 +1,4 @@
-import {
-  forwardRef,
-  useCallback,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-  useState
-} from 'react';
+import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import type { Key, KeyboardEvent, RefAttributes } from 'react';
 import { flushSync } from 'react-dom';
 import clsx from 'clsx';
@@ -246,8 +239,10 @@ export interface DataGridProps<R, SR = unknown, K extends Key = Key> extends Sha
  *
  * <DataGrid columns={columns} rows={rows} />
  */
-function DataGridBase<R, SR, K extends Key>(props: DataGridProps<R, SR, K>,
-  ref: React.Ref<DataGridHandle>) {
+function DataGridBase<R, SR, K extends Key>(
+  props: DataGridProps<R, SR, K>,
+  ref: React.Ref<DataGridHandle>
+) {
   const {
     // Grid and data Props
     columns: rawColumns,
@@ -340,10 +335,10 @@ function DataGridBase<R, SR, K extends Key>(props: DataGridProps<R, SR, K>,
   const columnWidths = isColumnWidthsControlled ? columnWidthsRaw : columnWidthsInternal;
   const onColumnWidthsChange = isColumnWidthsControlled
     ? (columnWidths: ColumnWidths) => {
-      // we keep the internal state in sync with the prop but this prevents an extra render
-      setColumnWidthsInternal(columnWidths);
-      onColumnWidthsChangeRaw(columnWidths);
-    }
+        // we keep the internal state in sync with the prop but this prevents an extra render
+        setColumnWidthsInternal(columnWidths);
+        onColumnWidthsChangeRaw(columnWidths);
+      }
     : setColumnWidthsInternal;
 
   const getColumnWidth = useCallback(
@@ -1072,10 +1067,10 @@ function DataGridBase<R, SR, K extends Key>(props: DataGridProps<R, SR, K>,
       return selectedPosition.idx > colOverscanEndIdx
         ? [...viewportColumns, selectedColumn]
         : [
-          ...viewportColumns.slice(0, lastFrozenColumnIndex + 1),
-          selectedColumn,
-          ...viewportColumns.slice(lastFrozenColumnIndex + 1)
-        ];
+            ...viewportColumns.slice(0, lastFrozenColumnIndex + 1),
+            selectedColumn,
+            ...viewportColumns.slice(lastFrozenColumnIndex + 1)
+          ];
     }
     return viewportColumns;
   }
@@ -1205,9 +1200,10 @@ function DataGridBase<R, SR, K extends Key>(props: DataGridProps<R, SR, K>,
               : undefined,
           scrollPaddingBlock:
             isRowIdxWithinViewportBounds(selectedPosition.rowIdx) ||
-              scrollToPosition?.rowIdx !== undefined
-              ? `${headerRowsHeight + topSummaryRowsCount * summaryRowHeight}px ${bottomSummaryRowsCount * summaryRowHeight
-              }px`
+            scrollToPosition?.rowIdx !== undefined
+              ? `${headerRowsHeight + topSummaryRowsCount * summaryRowHeight}px ${
+                  bottomSummaryRowsCount * summaryRowHeight
+                }px`
               : undefined,
           gridTemplateColumns,
           gridTemplateRows: templateRows,
