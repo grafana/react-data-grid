@@ -287,7 +287,7 @@ function HeaderFilters() {
           Clear Filters
         </button>
       </div>
-      <FilterContext value={filters}>
+      <FilterContext.Provider value={filters}>
         <DataGrid
           className={filters.enabled ? filterContainerClassname : undefined}
           columns={columns}
@@ -298,7 +298,7 @@ function HeaderFilters() {
             scrollbarGutter: 'stable'
           }}
         />
-      </FilterContext>
+      </FilterContext.Provider>
       <datalist id="developers">
         {developerOptions.map(({ label, value }) => (
           <option key={value} value={value}>

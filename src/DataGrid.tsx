@@ -1,12 +1,12 @@
 import {
+  forwardRef,
   useCallback,
   useImperativeHandle,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState
 } from 'react';
-import type { Key, KeyboardEvent } from 'react';
+import type { Key, KeyboardEvent, RefAttributes } from 'react';
 import { flushSync } from 'react-dom';
 import clsx from 'clsx';
 
@@ -18,6 +18,7 @@ import {
   useColumnWidths,
   useGridDimensions,
   useLatestFunc,
+  useLayoutEffect,
   useViewportColumns,
   useViewportRows,
   type HeaderRowSelectionContextValue
@@ -126,7 +127,6 @@ type SharedDivProps = Pick<
 >;
 
 export interface DataGridProps<R, SR = unknown, K extends Key = Key> extends SharedDivProps {
-  ref?: Maybe<React.Ref<DataGridHandle>>;
   /**
    * Grid and data Props
    */
@@ -246,9 +246,9 @@ export interface DataGridProps<R, SR = unknown, K extends Key = Key> extends Sha
  *
  * <DataGrid columns={columns} rows={rows} />
  */
-export function DataGrid<R, SR = unknown, K extends Key = Key>(props: DataGridProps<R, SR, K>) {
+function DataGridBase<R, SR, K extends Key>(props: DataGridProps<R, SR, K>,
+  ref: React.Ref<DataGridHandle>) {
   const {
-    ref,
     // Grid and data Props
     columns: rawColumns,
     rows,
@@ -340,10 +340,10 @@ export function DataGrid<R, SR = unknown, K extends Key = Key>(props: DataGridPr
   const columnWidths = isColumnWidthsControlled ? columnWidthsRaw : columnWidthsInternal;
   const onColumnWidthsChange = isColumnWidthsControlled
     ? (columnWidths: ColumnWidths) => {
-        // we keep the internal state in sync with the prop but this prevents an extra render
-        setColumnWidthsInternal(columnWidths);
-        onColumnWidthsChangeRaw(columnWidths);
-      }
+      // we keep the internal state in sync with the prop but this prevents an extra render
+      setColumnWidthsInternal(columnWidths);
+      onColumnWidthsChangeRaw(columnWidths);
+    }
     : setColumnWidthsInternal;
 
   const getColumnWidth = useCallback(
@@ -1072,10 +1072,10 @@ export function DataGrid<R, SR = unknown, K extends Key = Key>(props: DataGridPr
       return selectedPosition.idx > colOverscanEndIdx
         ? [...viewportColumns, selectedColumn]
         : [
-            ...viewportColumns.slice(0, lastFrozenColumnIndex + 1),
-            selectedColumn,
-            ...viewportColumns.slice(lastFrozenColumnIndex + 1)
-          ];
+          ...viewportColumns.slice(0, lastFrozenColumnIndex + 1),
+          selectedColumn,
+          ...viewportColumns.slice(lastFrozenColumnIndex + 1)
+        ];
     }
     return viewportColumns;
   }
@@ -1205,10 +1205,9 @@ export function DataGrid<R, SR = unknown, K extends Key = Key>(props: DataGridPr
               : undefined,
           scrollPaddingBlock:
             isRowIdxWithinViewportBounds(selectedPosition.rowIdx) ||
-            scrollToPosition?.rowIdx !== undefined
-              ? `${headerRowsHeight + topSummaryRowsCount * summaryRowHeight}px ${
-                  bottomSummaryRowsCount * summaryRowHeight
-                }px`
+              scrollToPosition?.rowIdx !== undefined
+              ? `${headerRowsHeight + topSummaryRowsCount * summaryRowHeight}px ${bottomSummaryRowsCount * summaryRowHeight
+              }px`
               : undefined,
           gridTemplateColumns,
           gridTemplateRows: templateRows,
@@ -1227,9 +1226,9 @@ export function DataGrid<R, SR = unknown, K extends Key = Key>(props: DataGridPr
       data-testid={testId}
       data-cy={dataCy}
     >
-      <DataGridDefaultRenderersContext value={defaultGridComponents}>
-        <HeaderRowSelectionChangeContext value={selectHeaderRowLatest}>
-          <HeaderRowSelectionContext value={headerSelectionValue}>
+      <DataGridDefaultRenderersContext.Provider value={defaultGridComponents}>
+        <HeaderRowSelectionChangeContext.Provider value={selectHeaderRowLatest}>
+          <HeaderRowSelectionContext.Provider value={headerSelectionValue}>
             {Array.from({ length: groupedColumnHeaderRowsCount }, (_, index) => (
               <GroupedColumnHeaderRow
                 key={index}
@@ -1258,8 +1257,8 @@ export function DataGrid<R, SR = unknown, K extends Key = Key>(props: DataGridPr
               selectCell={selectHeaderCellLatest}
               direction={direction}
             />
-          </HeaderRowSelectionContext>
-        </HeaderRowSelectionChangeContext>
+          </HeaderRowSelectionContext.Provider>
+        </HeaderRowSelectionChangeContext.Provider>
         {rows.length === 0 && noRowsFallback ? (
           noRowsFallback
         ) : (
@@ -1287,9 +1286,9 @@ export function DataGrid<R, SR = unknown, K extends Key = Key>(props: DataGridPr
                 />
               );
             })}
-            <RowSelectionChangeContext value={selectRowLatest}>
+            <RowSelectionChangeContext.Provider value={selectRowLatest}>
               {getViewportRows()}
-            </RowSelectionChangeContext>
+            </RowSelectionChangeContext.Provider>
             {bottomSummaryRows?.map((row, rowIdx) => {
               const gridRowStart = headerAndTopSummaryRowsCount + rows.length + rowIdx + 1;
               const summaryRowIdx = rows.length + rowIdx;
@@ -1322,7 +1321,7 @@ export function DataGrid<R, SR = unknown, K extends Key = Key>(props: DataGridPr
             })}
           </>
         )}
-      </DataGridDefaultRenderersContext>
+      </DataGridDefaultRenderersContext.Provider>
 
       {getDragHandle()}
 
@@ -1357,6 +1356,10 @@ export function DataGrid<R, SR = unknown, K extends Key = Key>(props: DataGridPr
     </div>
   );
 }
+
+export const DataGrid = forwardRef(DataGridBase) as <R, SR = unknown, K extends Key = Key>(
+  props: DataGridProps<R, SR, K> & RefAttributes<DataGridHandle>
+) => React.JSX.Element;
 
 function getCellToScroll(gridEl: HTMLDivElement) {
   return gridEl.querySelector<HTMLDivElement>(':scope > [role="row"] > [tabindex="0"]');

@@ -6,3 +6,4 @@ export * from './useRovingTabIndex';
 export * from './useRowSelection';
 export * from './useViewportColumns';
 export * from './useViewportRows';
+export * from './useLayoutEffect';

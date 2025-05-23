@@ -99,7 +99,7 @@ function TestGrid<R, SR, K extends React.Key>(props: DataGridProps<R, SR, K>) {
 
 function setupContext<R, SR, K extends React.Key>(props: DataGridProps<R, SR, K>) {
   return page.render(
-    <DataGridDefaultRenderersContext
+    <DataGridDefaultRenderersContext.Provider
       value={{
         noRowsFallback: <NoRowsGlobalFallback />,
         renderCheckbox: renderGlobalCheckbox,
@@ -109,7 +109,7 @@ function setupContext<R, SR, K extends React.Key>(props: DataGridProps<R, SR, K>
       }}
     >
       <TestGrid {...props} />
-    </DataGridDefaultRenderersContext>
+    </DataGridDefaultRenderersContext.Provider>
   );
 }
 

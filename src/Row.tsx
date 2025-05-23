@@ -1,4 +1,4 @@
-import { memo, useMemo } from 'react';
+import { forwardRef, memo, useMemo, type RefAttributes } from 'react';
 import clsx from 'clsx';
 
 import { RowSelectionContext, useLatestFunc, type RowSelectionContextValue } from './hooks';
@@ -85,7 +85,7 @@ function Row<R, SR>({
   );
 
   return (
-    <RowSelectionContext value={selectionValue}>
+    <RowSelectionContext.Provider value={selectionValue}>
       <div
         role="row"
         className={className}
@@ -97,11 +97,13 @@ function Row<R, SR>({
       >
         {cells}
       </div>
-    </RowSelectionContext>
+    </RowSelectionContext.Provider>
   );
 }
 
-const RowComponent = memo(Row) as <R, SR>(props: RenderRowProps<R, SR>) => React.JSX.Element;
+const RowComponent = memo(forwardRef(Row)) as <R, SR>(
+  props: RenderRowProps<R, SR> & RefAttributes<HTMLDivElement>
+) => React.JSX.Element;
 
 export default RowComponent;
 

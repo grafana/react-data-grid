@@ -1,4 +1,4 @@
-import { memo, type MouseEvent } from 'react';
+import { memo, forwardRef, type MouseEvent, type RefAttributes } from 'react';
 import { css } from '@linaria/core';
 
 import { useRovingTabIndex } from './hooks';
@@ -33,7 +33,9 @@ function Cell<R, SR>({
   selectCell,
   style,
   ...props
-}: CellRendererProps<R, SR>) {
+}: CellRendererProps<R, SR>,
+  ref: React.Ref<HTMLDivElement>
+) {
   const { tabIndex, childTabIndex, onFocus } = useRovingTabIndex(isCellSelected);
 
   const { cellClass } = column;
@@ -101,6 +103,7 @@ function Cell<R, SR>({
       aria-colspan={colSpan}
       aria-selected={isCellSelected}
       aria-readonly={!isEditable || undefined}
+      ref={ref}
       tabIndex={tabIndex}
       className={className}
       style={{
@@ -126,7 +129,9 @@ function Cell<R, SR>({
   );
 }
 
-const CellComponent = memo(Cell) as <R, SR>(props: CellRendererProps<R, SR>) => React.JSX.Element;
+const CellComponent = memo(forwardRef(Cell)) as <R, SR>(
+  props: CellRendererProps<R, SR> & RefAttributes<HTMLDivElement>
+) => React.JSX.Element;
 
 export default CellComponent;
 
