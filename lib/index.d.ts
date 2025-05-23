@@ -1,13 +1,13 @@
-import * as react5 from "react";
+import * as react2 from "react";
 import * as react11 from "react";
-import * as react12 from "react";
+import * as react13 from "react";
 import { Key, ReactElement, ReactNode, RefAttributes } from "react";
 import * as react_jsx_runtime3 from "react/jsx-runtime";
-import * as react_jsx_runtime8 from "react/jsx-runtime";
+import * as react_jsx_runtime12 from "react/jsx-runtime";
 import * as react_jsx_runtime9 from "react/jsx-runtime";
 import * as react_jsx_runtime4 from "react/jsx-runtime";
-import * as react_jsx_runtime7 from "react/jsx-runtime";
-import * as react_jsx_runtime1 from "react/jsx-runtime";
+import * as react_jsx_runtime5 from "react/jsx-runtime";
+import * as react_jsx_runtime6 from "react/jsx-runtime";
 
 //#region src/types.d.ts
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
@@ -447,7 +447,7 @@ declare function TreeDataGrid<R, SR = unknown, K extends Key = Key>({
 
 //#endregion
 //#region src/DataGridDefaultRenderersContext.d.ts
-declare const DataGridDefaultRenderersContext: react5.Context<Maybe<Renderers<any, any>>>;
+declare const DataGridDefaultRenderersContext: react2.Context<Maybe<Renderers<any, any>>>;
 
 //#endregion
 //#region src/Row.d.ts
@@ -468,7 +468,7 @@ declare function renderCheckbox({
   onChange,
   indeterminate,
   ...props
-}: RenderCheckboxProps): react_jsx_runtime8.JSX.Element;
+}: RenderCheckboxProps): react_jsx_runtime12.JSX.Element;
 
 //#endregion
 //#region src/cellRenderers/renderToggleGroup.d.ts
@@ -498,7 +498,7 @@ declare function SelectCellFormatter({
   onChange,
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledBy
-}: SelectCellFormatterProps): react12.ReactNode;
+}: SelectCellFormatterProps): react13.ReactNode;
 
 //#endregion
 //#region src/editors/textEditor.d.ts
@@ -515,13 +515,13 @@ declare function renderHeaderCell<R, SR>({
   column,
   sortDirection,
   priority
-}: RenderHeaderCellProps<R, SR>): string | react_jsx_runtime7.JSX.Element;
+}: RenderHeaderCellProps<R, SR>): string | react_jsx_runtime5.JSX.Element;
 
 //#endregion
 //#region src/sortStatus.d.ts
 declare function renderSortIcon({
   sortDirection
-}: RenderSortIconProps): react_jsx_runtime1.JSX.Element | null;
+}: RenderSortIconProps): react_jsx_runtime6.JSX.Element | null;
 declare function renderSortPriority({
   priority
 }: RenderSortPriorityProps): number | undefined;
