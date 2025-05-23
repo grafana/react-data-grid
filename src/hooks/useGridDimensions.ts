@@ -1,5 +1,7 @@
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
+
+import { useLayoutEffect } from './useLayoutEffect';
 
 export function useGridDimensions() {
   const gridRef = useRef<HTMLDivElement>(null);

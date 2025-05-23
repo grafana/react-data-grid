@@ -23,11 +23,11 @@ function Root() {
   const [direction, setDirection] = useState<Direction>('ltr');
 
   return (
-    <DirectionContext value={direction}>
+    <DirectionContext.Provider value={direction}>
       <Nav direction={direction} onDirectionChange={setDirection} />
       <main dir={direction} className={mainClassname}>
         <Outlet />
       </main>
-    </DirectionContext>
+    </DirectionContext.Provider>
   );
 }

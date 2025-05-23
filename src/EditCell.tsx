@@ -55,7 +55,7 @@ type SharedCellRendererProps<R, SR> = Pick<CellRendererProps<R, SR>, 'colSpan'>;
 
 interface EditCellProps<R, SR>
   extends Omit<RenderEditCellProps<R, SR>, 'onRowChange' | 'onClose'>,
-    SharedCellRendererProps<R, SR> {
+  SharedCellRendererProps<R, SR> {
   rowIdx: number;
   onRowChange: (row: R, commitChanges: boolean, shouldFocusCell: boolean) => void;
   closeEditor: (shouldFocusCell: boolean) => void;
@@ -75,7 +75,7 @@ export default function EditCell<R, SR>({
 }: EditCellProps<R, SR>) {
   const captureEventRef = useRef<MouseEvent | undefined>(undefined);
   const abortControllerRef = useRef<AbortController>(undefined);
-  const frameRequestRef = useRef<number>(undefined);
+  const frameRequestRef = useRef<number | undefined>(undefined);
   const commitOnOutsideClick = column.editorOptions?.commitOnOutsideClick ?? true;
 
   // We need to prevent the `useLayoutEffect` from cleaning up between re-renders,
@@ -103,7 +103,7 @@ export default function EditCell<R, SR>({
             signal
           })
           // ignore abort errors
-          .catch(() => {});
+          .catch(() => { });
       } else {
         frameRequestRef.current = requestAnimationFrame(commitOnOutsideMouseDown);
       }
