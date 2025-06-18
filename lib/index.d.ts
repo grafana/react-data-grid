@@ -1,4 +1,4 @@
-import * as react7 from "react";
+import * as react1 from "react";
 import { Key, ReactElement, ReactNode, RefAttributes } from "react";
 import "react/jsx-runtime";
 
@@ -436,7 +436,7 @@ declare function TreeDataGrid<R, SR = unknown, K extends Key = Key>({
 }: TreeDataGridProps<R, SR, K>): react_jsx_runtime13.JSX.Element;
 //#endregion
 //#region src/DataGridDefaultRenderersContext.d.ts
-declare const DataGridDefaultRenderersContext: react7.Context<Maybe<Renderers<any, any>>>;
+declare const DataGridDefaultRenderersContext: react1.Context<Maybe<Renderers<any, any>>>;
 //#endregion
 //#region src/Row.d.ts
 declare const RowComponent: <R, SR>(props: RenderRowProps<R, SR> & RefAttributes<HTMLDivElement>) => React.JSX.Element;
@@ -465,7 +465,7 @@ declare function ToggleGroup<R, SR>({
 }: RenderGroupCellProps<R, SR>): react_jsx_runtime13.JSX.Element;
 //#endregion
 //#region src/cellRenderers/renderValue.d.ts
-declare function renderValue<R, SR>(props: RenderCellProps<R, SR>): react7.ReactNode;
+declare function renderValue<R, SR>(props: RenderCellProps<R, SR>): react1.ReactNode;
 //#endregion
 //#region src/cellRenderers/SelectCellFormatter.d.ts
 type SharedInputProps = Pick<RenderCheckboxProps, 'disabled' | 'tabIndex' | 'aria-label' | 'aria-labelledby' | 'indeterminate' | 'onChange'>;
@@ -480,7 +480,7 @@ declare function SelectCellFormatter({
   onChange,
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledBy
-}: SelectCellFormatterProps): react7.ReactNode;
+}: SelectCellFormatterProps): react1.ReactNode;
 //#endregion
 //#region src/editors/textEditor.d.ts
 declare function textEditor<TRow, TSummaryRow>({
