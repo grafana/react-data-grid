@@ -4,10 +4,11 @@ import { floor, max, min } from '../utils';
 
 interface ViewportRowsArgs<R> {
   rows: readonly R[];
-  rowHeight: number | ((row: R) => number);
+  rowHeight: number | string | ((row: R) => number);
   clientHeight: number;
   scrollTop: number;
   enableVirtualization: boolean;
+  gridHeight: number;
 }
 
 export function useViewportRows<R>({
@@ -15,7 +16,8 @@ export function useViewportRows<R>({
   rowHeight,
   clientHeight,
   scrollTop,
-  enableVirtualization
+  enableVirtualization,
+  gridHeight
 }: ViewportRowsArgs<R>) {
   const { totalRowHeight, gridTemplateRows, getRowTop, getRowHeight, findRowIdx } = useMemo(() => {
     if (typeof rowHeight === 'number') {
@@ -25,6 +27,16 @@ export function useViewportRows<R>({
         getRowTop: (rowIdx: number) => rowIdx * rowHeight,
         getRowHeight: () => rowHeight,
         findRowIdx: (offset: number) => floor(offset / rowHeight)
+      };
+    }
+
+    if (typeof rowHeight === 'string') {
+      return {
+        totalRowHeight: gridHeight,
+        gridTemplateRows: ` repeat(${rows.length}, ${rowHeight})`,
+        getRowTop: () => -1,
+        getRowHeight: () => -1,
+        findRowIdx: () => -1
       };
     }
 
@@ -70,7 +82,7 @@ export function useViewportRows<R>({
         return 0;
       }
     };
-  }, [rowHeight, rows]);
+  }, [gridHeight, rowHeight, rows]);
 
   let rowOverscanStartIdx = 0;
   let rowOverscanEndIdx = rows.length - 1;

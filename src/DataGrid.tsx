@@ -143,7 +143,7 @@ export interface DataGridProps<R, SR = unknown, K extends Key = Key> extends Sha
    * Height of each row in pixels
    * @default 35
    */
-  rowHeight?: Maybe<number | ((row: NoInfer<R>) => number)>;
+  rowHeight?: Maybe<number | string | ((row: NoInfer<R>) => number)>;
   /**
    * Height of the header row in pixels
    * @default 35
@@ -335,10 +335,10 @@ function DataGridBase<R, SR, K extends Key>(
   const columnWidths = isColumnWidthsControlled ? columnWidthsRaw : columnWidthsInternal;
   const onColumnWidthsChange = isColumnWidthsControlled
     ? (columnWidths: ColumnWidths) => {
-        // we keep the internal state in sync with the prop but this prevents an extra render
-        setColumnWidthsInternal(columnWidths);
-        onColumnWidthsChangeRaw(columnWidths);
-      }
+      // we keep the internal state in sync with the prop but this prevents an extra render
+      setColumnWidthsInternal(columnWidths);
+      onColumnWidthsChangeRaw(columnWidths);
+    }
     : setColumnWidthsInternal;
 
   const getColumnWidth = useCallback(
@@ -442,7 +442,8 @@ function DataGridBase<R, SR, K extends Key>(
     rowHeight,
     clientHeight,
     scrollTop,
-    enableVirtualization
+    enableVirtualization,
+    gridHeight,
   });
 
   const viewportColumns = useViewportColumns({
@@ -878,11 +879,13 @@ function DataGridBase<R, SR, K extends Key>(
         return { idx: maxColIdx, rowIdx: ctrlKey ? maxRowIdx : rowIdx };
       case 'PageUp': {
         if (selectedPosition.rowIdx === minRowIdx) return selectedPosition;
+        if (typeof rowHeight === 'string') return { idx, rowIdx: rowIdx + 1 };
         const nextRowY = getRowTop(rowIdx) + getRowHeight(rowIdx) - clientHeight;
         return { idx, rowIdx: nextRowY > 0 ? findRowIdx(nextRowY) : 0 };
       }
       case 'PageDown': {
         if (selectedPosition.rowIdx >= rows.length) return selectedPosition;
+        if (typeof rowHeight === 'string') return { idx, rowIdx: rowIdx - 1 };
         const nextRowY = getRowTop(rowIdx) + clientHeight;
         return { idx, rowIdx: nextRowY < totalRowHeight ? findRowIdx(nextRowY) : rows.length - 1 };
       }
@@ -1059,10 +1062,10 @@ function DataGridBase<R, SR, K extends Key>(
       return selectedPosition.idx > colOverscanEndIdx
         ? [...viewportColumns, selectedColumn]
         : [
-            ...viewportColumns.slice(0, lastFrozenColumnIndex + 1),
-            selectedColumn,
-            ...viewportColumns.slice(lastFrozenColumnIndex + 1)
-          ];
+          ...viewportColumns.slice(0, lastFrozenColumnIndex + 1),
+          selectedColumn,
+          ...viewportColumns.slice(lastFrozenColumnIndex + 1)
+        ];
     }
     return viewportColumns;
   }
@@ -1191,10 +1194,9 @@ function DataGridBase<R, SR, K extends Key>(
               : undefined,
           scrollPaddingBlock:
             isRowIdxWithinViewportBounds(selectedPosition.rowIdx) ||
-            scrollToPosition?.rowIdx !== undefined
-              ? `${headerRowsHeight + topSummaryRowsCount * summaryRowHeight}px ${
-                  bottomSummaryRowsCount * summaryRowHeight
-                }px`
+              scrollToPosition?.rowIdx !== undefined
+              ? `${headerRowsHeight + topSummaryRowsCount * summaryRowHeight}px ${bottomSummaryRowsCount * summaryRowHeight
+              }px`
               : undefined,
           gridTemplateColumns,
           gridTemplateRows: templateRows,
