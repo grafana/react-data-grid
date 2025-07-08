@@ -1,0 +1,22 @@
+:root,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: sans-serif;
+}
+
+:root {
+  color-scheme: light dark;
+
+  background-color: light-dark(#fff, hsl(0deg 0% 10%));
+  color: light-dark(#111, #fff);
+}
+
+#root {
+  display: grid;
+  grid-template-columns: auto 1fr;
+}
+
+.fill-grid {
+  block-size: 100%;
+}
