@@ -438,6 +438,7 @@ function DataGridBase<R, SR, K extends Key>(
     getRowHeight,
     findRowIdx
   } = useViewportRows({
+    element: gridRef.current,
     rows,
     rowHeight,
     clientHeight,
@@ -879,15 +880,18 @@ function DataGridBase<R, SR, K extends Key>(
         return { idx: maxColIdx, rowIdx: ctrlKey ? maxRowIdx : rowIdx };
       case 'PageUp': {
         if (selectedPosition.rowIdx === minRowIdx) return selectedPosition;
-        if (typeof rowHeight === 'string') return { idx, rowIdx: rowIdx + 1 };
-        const nextRowY = getRowTop(rowIdx) + getRowHeight(rowIdx) - clientHeight;
-        return { idx, rowIdx: nextRowY > 0 ? findRowIdx(nextRowY) : 0 };
+        const rowTop = getRowTop(rowIdx);
+        const rowHeight = getRowHeight(rowIdx);
+        const nextRowY = rowTop + rowHeight - clientHeight;
+        const nextRowIdx = nextRowY > 0 ? findRowIdx(nextRowY) : 0;
+        return { idx, rowIdx: (rowTop === -1 || rowHeight === -1 || nextRowIdx === -1) ? rowIdx + 1 : nextRowIdx };
       }
       case 'PageDown': {
         if (selectedPosition.rowIdx >= rows.length) return selectedPosition;
-        if (typeof rowHeight === 'string') return { idx, rowIdx: rowIdx - 1 };
-        const nextRowY = getRowTop(rowIdx) + clientHeight;
-        return { idx, rowIdx: nextRowY < totalRowHeight ? findRowIdx(nextRowY) : rows.length - 1 };
+        const rowTop = getRowTop(rowIdx);
+        const nextRowY = rowTop + clientHeight;
+        const nextRowIdx = nextRowY < totalRowHeight ? findRowIdx(nextRowY) : rows.length - 1;
+        return { idx, rowIdx: (rowTop === -1 || nextRowIdx === -1) ? rowIdx - 1 : nextRowIdx };
       }
       default:
         return selectedPosition;

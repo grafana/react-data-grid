@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { floor, max, min } from '../utils';
 
 interface ViewportRowsArgs<R> {
+  element: HTMLElement | null;
   rows: readonly R[];
   rowHeight: number | string | ((row: R) => number);
   clientHeight: number;
@@ -12,6 +13,7 @@ interface ViewportRowsArgs<R> {
 }
 
 export function useViewportRows<R>({
+  element,
   rows,
   rowHeight,
   clientHeight,
@@ -31,12 +33,51 @@ export function useViewportRows<R>({
     }
 
     if (typeof rowHeight === 'string') {
+      const _headerElement = (element: Element): Element | null =>
+        element.querySelector('[role="columnheader"]');
+      const _rowElement = (element: Element, rowIdx: number): Element | null => {
+        const nth = _headerElement(element) ? rowIdx + 1 : rowIdx;
+        return element.querySelector(`[role="row"]:nth-of-type(${nth})`);
+      };
       return {
         totalRowHeight: gridHeight,
         gridTemplateRows: ` repeat(${rows.length}, ${rowHeight})`,
-        getRowTop: () => -1,
-        getRowHeight: () => -1,
-        findRowIdx: () => -1
+        getRowTop(rowIdx: number) {
+          if (!element) return -1;
+          const rowElement = _rowElement(element, rowIdx);
+          if (!rowElement) return -1;
+          return rowElement.scrollTop;
+        },
+        getRowHeight(rowIdx: number) {
+          if (!element) return -1;
+          const rowElement = _rowElement(element, rowIdx);
+          if (!rowElement) return 0;
+          return rowElement.scrollHeight;
+        },
+        findRowIdx(offset: number) {
+          if (!element) return -1;
+          const rowElements = element.querySelectorAll('[role="row"]');
+          let start = 0;
+          let end = rowElements.length - 1;
+
+          while (start <= end) {
+            const middle = start + floor((end - start) / 2);
+            const currentScrollTop = _rowElement(element, middle)?.scrollTop ?? 0;
+            const prevScrollTop = _rowElement(element, middle - 1)?.scrollTop ?? 0;
+
+            if (currentScrollTop >= offset && prevScrollTop < offset) return middle;
+
+            if (currentScrollTop < offset) {
+              start = middle + 1;
+            } else if (currentScrollTop > offset) {
+              end = middle - 1;
+            }
+
+            if (start > end) return end;
+          }
+
+          return -1;
+        }
       };
     }
 
@@ -82,7 +123,7 @@ export function useViewportRows<R>({
         return 0;
       }
     };
-  }, [gridHeight, rowHeight, rows]);
+  }, [element, gridHeight, rowHeight, rows]);
 
   let rowOverscanStartIdx = 0;
   let rowOverscanEndIdx = rows.length - 1;
