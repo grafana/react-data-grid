@@ -33,11 +33,9 @@ export function useViewportRows<R>({
     }
 
     if (typeof rowHeight === 'string') {
-      const _headerElement = (element: Element): Element | null =>
-        element.querySelector('[role="columnheader"]');
       const _rowElement = (element: Element, rowIdx: number): Element | null => {
-        const nth = _headerElement(element) ? rowIdx + 1 : rowIdx;
-        return element.querySelector(`[role="row"]:nth-of-type(${nth})`);
+        const nth = element.querySelector('.rdg-header-row') ? rowIdx + 2 : rowIdx + 1;
+        return element.querySelector(`[role="row"][aria-rowindex="${nth}"]`);
       };
       return {
         totalRowHeight: gridHeight,
@@ -51,7 +49,7 @@ export function useViewportRows<R>({
         getRowHeight(rowIdx: number) {
           if (!element) return -1;
           const rowElement = _rowElement(element, rowIdx);
-          if (!rowElement) return 0;
+          if (!rowElement) return -1;
           return rowElement.scrollHeight;
         },
         findRowIdx(offset: number) {

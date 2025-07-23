@@ -884,14 +884,14 @@ function DataGridBase<R, SR, K extends Key>(
         const rowHeight = getRowHeight(rowIdx);
         const nextRowY = rowTop + rowHeight - clientHeight;
         const nextRowIdx = nextRowY > 0 ? findRowIdx(nextRowY) : 0;
-        return { idx, rowIdx: (rowTop === -1 || rowHeight === -1 || nextRowIdx === -1) ? rowIdx + 1 : nextRowIdx };
+        return { idx, rowIdx: (rowTop === -1 || rowHeight === -1 || nextRowIdx === -1) ? rowIdx - 1 : nextRowIdx };
       }
       case 'PageDown': {
         if (selectedPosition.rowIdx >= rows.length) return selectedPosition;
         const rowTop = getRowTop(rowIdx);
         const nextRowY = rowTop + clientHeight;
         const nextRowIdx = nextRowY < totalRowHeight ? findRowIdx(nextRowY) : rows.length - 1;
-        return { idx, rowIdx: (rowTop === -1 || nextRowIdx === -1) ? rowIdx - 1 : nextRowIdx };
+        return { idx, rowIdx: (rowTop === -1 || nextRowIdx === -1) ? rowIdx + 1 : nextRowIdx };
       }
       default:
         return selectedPosition;
