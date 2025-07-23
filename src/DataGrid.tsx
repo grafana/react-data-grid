@@ -312,8 +312,12 @@ function DataGridBase<R, SR, K extends Key>(
   const renderCheckbox =
     renderers?.renderCheckbox ?? defaultRenderers?.renderCheckbox ?? defaultRenderCheckbox;
   const noRowsFallback = renderers?.noRowsFallback ?? defaultRenderers?.noRowsFallback;
-  const enableVirtualization = rawEnableVirtualization ?? true;
+  const enableVirtualization = rawEnableVirtualization ?? typeof rawRowHeight !== 'string';
   const direction = rawDirection ?? 'ltr';
+
+  if (enableVirtualization && typeof rowHeight === 'string') {
+    throw new Error('`rowHeight` cannot be a string when `enableVirtualization` is true.');
+  }
 
   /**
    * states
@@ -880,18 +884,13 @@ function DataGridBase<R, SR, K extends Key>(
         return { idx: maxColIdx, rowIdx: ctrlKey ? maxRowIdx : rowIdx };
       case 'PageUp': {
         if (selectedPosition.rowIdx === minRowIdx) return selectedPosition;
-        const rowTop = getRowTop(rowIdx);
-        const rowHeight = getRowHeight(rowIdx);
-        const nextRowY = rowTop + rowHeight - clientHeight;
-        const nextRowIdx = nextRowY > 0 ? findRowIdx(nextRowY) : 0;
-        return { idx, rowIdx: (rowTop === -1 || rowHeight === -1 || nextRowIdx === -1) ? rowIdx - 1 : nextRowIdx };
+        const nextRowY = getRowTop(rowIdx) + getRowHeight(rowIdx) - clientHeight;
+        return { idx, rowIdx: nextRowY > 0 ? findRowIdx(nextRowY) : 0 };
       }
       case 'PageDown': {
         if (selectedPosition.rowIdx >= rows.length) return selectedPosition;
-        const rowTop = getRowTop(rowIdx);
-        const nextRowY = rowTop + clientHeight;
-        const nextRowIdx = nextRowY < totalRowHeight ? findRowIdx(nextRowY) : rows.length - 1;
-        return { idx, rowIdx: (rowTop === -1 || nextRowIdx === -1) ? rowIdx + 1 : nextRowIdx };
+        const nextRowY = getRowTop(rowIdx) + clientHeight;
+        return { idx, rowIdx: nextRowY < totalRowHeight ? findRowIdx(nextRowY) : rows.length - 1 };
       }
       default:
         return selectedPosition;

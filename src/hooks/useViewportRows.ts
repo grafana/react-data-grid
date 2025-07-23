@@ -33,35 +33,39 @@ export function useViewportRows<R>({
     }
 
     if (typeof rowHeight === 'string') {
-      const _rowElement = (element: Element, rowIdx: number): Element | null => {
+      const getRowElementFirstCell = (element: Element, rowIdx: number): Element | null => {
         const nth = element.querySelector('.rdg-header-row') ? rowIdx + 2 : rowIdx + 1;
-        return element.querySelector(`[role="row"][aria-rowindex="${nth}"]`);
+        return element.querySelector(`[role="row"][aria-rowindex="${nth}"] > [role="gridcell"]`);
+      };
+      const getRowYTop = (element: Element, rowIdx: number) => {
+        const cell = getRowElementFirstCell(element, rowIdx);
+        if (!cell) return -1;
+        return cell.getBoundingClientRect().top + element.scrollTop;
       };
       return {
-        totalRowHeight: gridHeight,
+        totalRowHeight: element?.scrollHeight ?? gridHeight,
         gridTemplateRows: ` repeat(${rows.length}, ${rowHeight})`,
         getRowTop(rowIdx: number) {
           if (!element) return -1;
-          const rowElement = _rowElement(element, rowIdx);
-          if (!rowElement) return -1;
-          return rowElement.scrollTop;
+          const cell = getRowElementFirstCell(element, rowIdx);
+          if (!cell) return -1;
+          return cell.getBoundingClientRect().top + element.scrollTop;
         },
         getRowHeight(rowIdx: number) {
           if (!element) return -1;
-          const rowElement = _rowElement(element, rowIdx);
-          if (!rowElement) return -1;
-          return rowElement.scrollHeight;
+          const cell = getRowElementFirstCell(element, rowIdx);
+          if (!cell) return -1;
+          return cell.clientHeight;
         },
         findRowIdx(offset: number) {
           if (!element) return -1;
-          const rowElements = element.querySelectorAll('[role="row"]');
           let start = 0;
-          let end = rowElements.length - 1;
+          let end = rows.length - 1;
 
           while (start <= end) {
             const middle = start + floor((end - start) / 2);
-            const currentScrollTop = _rowElement(element, middle)?.scrollTop ?? 0;
-            const prevScrollTop = _rowElement(element, middle - 1)?.scrollTop ?? 0;
+            const currentScrollTop = getRowYTop(element, middle);
+            const prevScrollTop = getRowYTop(element, middle - 1);
 
             if (currentScrollTop >= offset && prevScrollTop < offset) return middle;
 

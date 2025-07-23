@@ -179,7 +179,7 @@ function MyGrid() {
 }
 ```
 
-###### `rowHeight?: Maybe<number | ((row: R) => number)>`
+###### `rowHeight?: Maybe<number | string | ((row: R) => number)>`
 
 **Default:** `35` pixels
 
