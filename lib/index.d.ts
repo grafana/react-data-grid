@@ -1,6 +1,6 @@
-import * as react1 from "react";
-import { Key, ReactElement, ReactNode, RefAttributes } from "react";
-import "react/jsx-runtime";
+import * as react0 from "react";
+import { CSSProperties, Key, ReactElement, ReactNode, RefAttributes } from "react";
+import * as react_jsx_runtime0 from "react/jsx-runtime";
 
 //#region src/types.d.ts
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
@@ -325,7 +325,7 @@ interface DataGridProps<R, SR = unknown, K extends Key = Key> extends SharedDivP
    * Height of each row in pixels
    * @default 35
    */
-  rowHeight?: Maybe<number | ((row: NoInfer<R>) => number)>;
+  rowHeight?: Maybe<CSSProperties['height'] | ((row: NoInfer<R>) => number)>;
   /**
    * Height of the header row in pixels
    * @default 35
@@ -433,10 +433,10 @@ declare function TreeDataGrid<R, SR = unknown, K extends Key = Key>({
   onExpandedGroupIdsChange,
   groupIdGetter: rawGroupIdGetter,
   ...props
-}: TreeDataGridProps<R, SR, K>): react_jsx_runtime13.JSX.Element;
+}: TreeDataGridProps<R, SR, K>): react_jsx_runtime0.JSX.Element;
 //#endregion
 //#region src/DataGridDefaultRenderersContext.d.ts
-declare const DataGridDefaultRenderersContext: react1.Context<Maybe<Renderers<any, any>>>;
+declare const DataGridDefaultRenderersContext: react0.Context<Maybe<Renderers<any, any>>>;
 //#endregion
 //#region src/Row.d.ts
 declare const RowComponent: <R, SR>(props: RenderRowProps<R, SR> & RefAttributes<HTMLDivElement>) => React.JSX.Element;
@@ -453,19 +453,19 @@ declare function renderCheckbox({
   onChange,
   indeterminate,
   ...props
-}: RenderCheckboxProps): react_jsx_runtime13.JSX.Element;
+}: RenderCheckboxProps): react_jsx_runtime0.JSX.Element;
 //#endregion
 //#region src/cellRenderers/renderToggleGroup.d.ts
-declare function renderToggleGroup<R, SR>(props: RenderGroupCellProps<R, SR>): react_jsx_runtime13.JSX.Element;
+declare function renderToggleGroup<R, SR>(props: RenderGroupCellProps<R, SR>): react_jsx_runtime0.JSX.Element;
 declare function ToggleGroup<R, SR>({
   groupKey,
   isExpanded,
   tabIndex,
   toggleGroup
-}: RenderGroupCellProps<R, SR>): react_jsx_runtime13.JSX.Element;
+}: RenderGroupCellProps<R, SR>): react_jsx_runtime0.JSX.Element;
 //#endregion
 //#region src/cellRenderers/renderValue.d.ts
-declare function renderValue<R, SR>(props: RenderCellProps<R, SR>): react1.ReactNode;
+declare function renderValue<R, SR>(props: RenderCellProps<R, SR>): react0.ReactNode;
 //#endregion
 //#region src/cellRenderers/SelectCellFormatter.d.ts
 type SharedInputProps = Pick<RenderCheckboxProps, 'disabled' | 'tabIndex' | 'aria-label' | 'aria-labelledby' | 'indeterminate' | 'onChange'>;
@@ -480,7 +480,7 @@ declare function SelectCellFormatter({
   onChange,
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledBy
-}: SelectCellFormatterProps): react1.ReactNode;
+}: SelectCellFormatterProps): react0.ReactNode;
 //#endregion
 //#region src/editors/textEditor.d.ts
 declare function textEditor<TRow, TSummaryRow>({
@@ -488,19 +488,19 @@ declare function textEditor<TRow, TSummaryRow>({
   column,
   onRowChange,
   onClose
-}: RenderEditCellProps<TRow, TSummaryRow>): react_jsx_runtime13.JSX.Element;
+}: RenderEditCellProps<TRow, TSummaryRow>): react_jsx_runtime0.JSX.Element;
 //#endregion
 //#region src/renderHeaderCell.d.ts
 declare function renderHeaderCell<R, SR>({
   column,
   sortDirection,
   priority
-}: RenderHeaderCellProps<R, SR>): string | react_jsx_runtime13.JSX.Element;
+}: RenderHeaderCellProps<R, SR>): string | react_jsx_runtime0.JSX.Element;
 //#endregion
 //#region src/sortStatus.d.ts
 declare function renderSortIcon({
   sortDirection
-}: RenderSortIconProps): react_jsx_runtime13.JSX.Element | null;
+}: RenderSortIconProps): react_jsx_runtime0.JSX.Element | null;
 declare function renderSortPriority({
   priority
 }: RenderSortPriorityProps): number | undefined;
@@ -517,5 +517,5 @@ declare function useHeaderRowSelection(): {
   onRowSelectionChange: (selectRowEvent: SelectHeaderRowEvent) => void;
 };
 //#endregion
-export { CalculatedColumn, CalculatedColumnOrColumnGroup, CalculatedColumnParent, CellComponent as Cell, CellCopyArgs, CellKeyDownArgs, CellKeyboardEvent, CellMouseArgs, CellMouseEvent, CellPasteArgs, CellRendererProps, CellSelectArgs, ColSpanArgs, Column, ColumnGroup, ColumnOrColumnGroup, ColumnWidth, ColumnWidths, DataGrid, DataGridDefaultRenderersContext, DataGridHandle, DataGridProps, DefaultColumnOptions, FillEvent, RenderCellProps, RenderCheckboxProps, RenderEditCellProps, RenderGroupCellProps, RenderHeaderCellProps, RenderRowProps, RenderSortIconProps, RenderSortPriorityProps, RenderSortStatusProps, RenderSummaryCellProps, Renderers, RowComponent as Row, RowHeightArgs, RowsChangeData, SELECT_COLUMN_KEY, SelectCellFormatter, SelectCellOptions, SelectColumn, SelectHeaderRowEvent, SelectRowEvent, SortColumn, SortDirection, ToggleGroup, TreeDataGrid, TreeDataGridProps, renderCheckbox, renderHeaderCell, renderSortIcon, renderSortPriority, renderToggleGroup, renderValue, textEditor, useHeaderRowSelection, useRowSelection };
+export { type CalculatedColumn, type CalculatedColumnOrColumnGroup, type CalculatedColumnParent, CellComponent as Cell, type CellCopyArgs, type CellKeyDownArgs, type CellKeyboardEvent, type CellMouseArgs, type CellMouseEvent, type CellPasteArgs, type CellRendererProps, type CellSelectArgs, type ColSpanArgs, type Column, type ColumnGroup, type ColumnOrColumnGroup, type ColumnWidth, type ColumnWidths, DataGrid, DataGridDefaultRenderersContext, type DataGridHandle, type DataGridProps, type DefaultColumnOptions, type FillEvent, type RenderCellProps, type RenderCheckboxProps, type RenderEditCellProps, type RenderGroupCellProps, type RenderHeaderCellProps, type RenderRowProps, type RenderSortIconProps, type RenderSortPriorityProps, type RenderSortStatusProps, type RenderSummaryCellProps, type Renderers, RowComponent as Row, type RowHeightArgs, type RowsChangeData, SELECT_COLUMN_KEY, SelectCellFormatter, type SelectCellOptions, SelectColumn, type SelectHeaderRowEvent, type SelectRowEvent, type SortColumn, type SortDirection, ToggleGroup, TreeDataGrid, type TreeDataGridProps, renderCheckbox, renderHeaderCell, renderSortIcon, renderSortPriority, renderToggleGroup, renderValue, textEditor, useHeaderRowSelection, useRowSelection };
 //# sourceMappingURL=index.d.ts.map
