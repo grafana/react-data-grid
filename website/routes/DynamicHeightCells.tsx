@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 
 import { DataGrid } from '../../src';
 import type { Column } from '../../src';
@@ -17,7 +17,7 @@ interface Row {
   issueType: string;
   startDate: string;
   completeDate: string;
-  dynamicContent: JSX.Element;
+  dynamicContent: ReactNode;
 }
 
 
