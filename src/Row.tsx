@@ -7,28 +7,31 @@ import type { CalculatedColumn, RenderRowProps } from './types';
 import { useDefaultRenderers } from './DataGridDefaultRenderersContext';
 import { rowClassname, rowSelectedClassname } from './style/row';
 
-function Row<R, SR>({
-  className,
-  rowIdx,
-  gridRowStart,
-  selectedCellIdx,
-  isRowSelectionDisabled,
-  isRowSelected,
-  draggedOverCellIdx,
-  lastFrozenColumnIndex,
-  row,
-  viewportColumns,
-  selectedCellEditor,
-  onCellMouseDown,
-  onCellClick,
-  onCellDoubleClick,
-  onCellContextMenu,
-  rowClass,
-  onRowChange,
-  selectCell,
-  style,
-  ...props
-}: RenderRowProps<R, SR>, ref: React.Ref<HTMLDivElement>) {
+function Row<R, SR>(
+  {
+    className,
+    rowIdx,
+    gridRowStart,
+    selectedCellIdx,
+    isRowSelectionDisabled,
+    isRowSelected,
+    draggedOverCellIdx,
+    lastFrozenColumnIndex,
+    row,
+    viewportColumns,
+    selectedCellEditor,
+    onCellMouseDown,
+    onCellClick,
+    onCellDoubleClick,
+    onCellContextMenu,
+    rowClass,
+    onRowChange,
+    selectCell,
+    style,
+    ...props
+  }: RenderRowProps<R, SR>,
+  ref: React.Ref<HTMLDivElement>
+) {
   const renderCell = useDefaultRenderers<R, SR>()!.renderCell!;
 
   const handleRowChange = useLatestFunc((column: CalculatedColumn<R, SR>, newRow: R) => {

@@ -1,5 +1,5 @@
 import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import type { Key, KeyboardEvent, RefAttributes } from 'react';
+import type { CSSProperties, Key, KeyboardEvent, RefAttributes } from 'react';
 import { flushSync } from 'react-dom';
 import clsx from 'clsx';
 
@@ -143,7 +143,7 @@ export interface DataGridProps<R, SR = unknown, K extends Key = Key> extends Sha
    * Height of each row in pixels
    * @default 35
    */
-  rowHeight?: Maybe<number | ((row: NoInfer<R>) => number)>;
+  rowHeight?: Maybe<CSSProperties['height'] | ((row: NoInfer<R>) => number)>;
   /**
    * Height of the header row in pixels
    * @default 35
@@ -312,8 +312,12 @@ function DataGridBase<R, SR, K extends Key>(
   const renderCheckbox =
     renderers?.renderCheckbox ?? defaultRenderers?.renderCheckbox ?? defaultRenderCheckbox;
   const noRowsFallback = renderers?.noRowsFallback ?? defaultRenderers?.noRowsFallback;
-  const enableVirtualization = rawEnableVirtualization ?? true;
+  const enableVirtualization = rawEnableVirtualization ?? typeof rawRowHeight !== 'string';
   const direction = rawDirection ?? 'ltr';
+
+  if (enableVirtualization && typeof rowHeight === 'string') {
+    throw new Error('`rowHeight` cannot be a string when `enableVirtualization` is true.');
+  }
 
   /**
    * states
@@ -438,11 +442,13 @@ function DataGridBase<R, SR, K extends Key>(
     getRowHeight,
     findRowIdx
   } = useViewportRows({
+    element: gridRef.current,
     rows,
     rowHeight,
     clientHeight,
     scrollTop,
-    enableVirtualization
+    enableVirtualization,
+    gridHeight
   });
 
   const viewportColumns = useViewportColumns({

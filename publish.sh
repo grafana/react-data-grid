@@ -62,8 +62,8 @@ tar -xzf "$TARBALL" -C .
 rm "$TARBALL"
 
 # Move contents of package to current directory
-rm -rf ./lib ./node_modules ./.cache ./test
-mv -f package/* .
+rm -rf ./lib ./node_modules ./.cache ./test ./.gitignore
+mv -f ./package/* .
 rm -rf ./package
 
 # Add, commit, push
