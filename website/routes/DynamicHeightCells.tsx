@@ -1,9 +1,9 @@
 import { useState, type ReactNode } from 'react';
+import { css } from '@linaria/core';
 
 import { DataGrid } from '../../src';
 import type { Column } from '../../src';
 import { useDirection } from '../directionContext';
-import { css } from '@linaria/core';
 
 export const Route = createFileRoute({
   component: DynamicHeightCells
@@ -19,7 +19,6 @@ interface Row {
   completeDate: string;
   dynamicContent: ReactNode;
 }
-
 
 const columns: Column<Row>[] = [
   {
@@ -55,7 +54,7 @@ const columns: Column<Row>[] = [
   {
     key: 'dynamicContent',
     name: 'Dynamic HTML Content',
-    width: 200,
+    width: 200
   }
 ];
 
@@ -116,12 +115,7 @@ function DynamicHeightCells() {
 
   return (
     <div className={rootClassname}>
-      <DataGrid
-        columns={columns}
-        rows={rows}
-        direction={direction}
-        rowHeight="auto"
-      />
+      <DataGrid columns={columns} rows={rows} direction={direction} rowHeight="auto" />
     </div>
   );
 }
