@@ -37,11 +37,13 @@ export function useViewportRows<R>({
         const nth = element.querySelector('.rdg-header-row') ? rowIdx + 2 : rowIdx + 1;
         return element.querySelector(`[role="row"][aria-rowindex="${nth}"] > [role="gridcell"]`);
       };
+
       const getRowYTop = (element: Element, rowIdx: number) => {
         const cell = getRowElementFirstCell(element, rowIdx);
         if (!cell) return -1;
         return cell.getBoundingClientRect().top + element.scrollTop;
       };
+
       return {
         totalRowHeight: element?.scrollHeight ?? gridHeight,
         gridTemplateRows: ` repeat(${rows.length}, ${rowHeight})`,

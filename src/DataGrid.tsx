@@ -1,5 +1,5 @@
 import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import type { Key, KeyboardEvent, RefAttributes } from 'react';
+import type { CSSProperties, Key, KeyboardEvent, RefAttributes } from 'react';
 import { flushSync } from 'react-dom';
 import clsx from 'clsx';
 
@@ -143,7 +143,7 @@ export interface DataGridProps<R, SR = unknown, K extends Key = Key> extends Sha
    * Height of each row in pixels
    * @default 35
    */
-  rowHeight?: Maybe<number | string | ((row: NoInfer<R>) => number)>;
+  rowHeight?: Maybe<CSSProperties["height"] | ((row: NoInfer<R>) => number)>;
   /**
    * Height of the header row in pixels
    * @default 35
