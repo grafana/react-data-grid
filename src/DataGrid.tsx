@@ -1326,6 +1326,7 @@ function DataGridBase<R, SR, K extends Key>(
         <div
           ref={focusSinkRef}
           tabIndex={isGroupRowFocused ? 0 : -1}
+          aria-hidden="true"
           className={clsx(focusSinkClassname, {
             [focusSinkHeaderAndSummaryClassname]: !isRowIdxWithinViewportBounds(
               selectedPosition.rowIdx
