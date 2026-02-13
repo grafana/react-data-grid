@@ -46,6 +46,7 @@ export default function ScrollToCell({
   return (
     <div
       ref={ref}
+      aria-hidden="true"
       style={{
         gridColumn: idx === undefined ? '1/-1' : idx + 1,
         gridRow: rowIdx === undefined ? '1/-1' : rowIdx + 2

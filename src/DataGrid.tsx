@@ -992,6 +992,7 @@ function DataGridBase<R, SR, K extends Key>(
     return (
       <div
         style={dragHandleStyle}
+        aria-hidden="true"
         className={clsx(cellDragHandleClassname, column.frozen && cellDragHandleFrozenClassname)}
         onPointerDown={handleDragHandlePointerDown}
         onPointerMove={isDragging ? handleDragHandlePointerMove : undefined}
