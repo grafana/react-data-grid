@@ -371,6 +371,7 @@ function ResizeHandle<R, SR>({
   return (
     <div
       className={resizeHandleClassname}
+      aria-hidden="true"
       onClick={stopPropagation}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
