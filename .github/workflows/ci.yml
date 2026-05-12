@@ -8,46 +8,79 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 24
           check-latest: true
-      - name: npm install
-        run: npm i
+      - name: yarn install
+        run: yarn install --immutable
       - name: Biome
-        run: node --run biome:ci
+        run: yarn biome:ci
       - name: Typecheck
-        run: node --run typecheck
+        run: yarn typecheck
       - name: ESLint
-        run: node --run eslint
+        run: yarn eslint
       - name: Prettier
-        run: node --run prettier:check
+        run: yarn prettier:check
       - name: Bundle
-        run: node --run build
+        run: yarn build
       - name: Build website
-        run: node --run build:website
+        run: yarn build:website
       - name: Install Playwright Browsers
-        run: npx playwright install chromium
+        run: yarn dlx playwright install chromium
       - name: Test
-        run: node --run test
+        run: yarn test
         timeout-minutes: 4
-      - name: Upload coverage
-        uses: codecov/codecov-action@v5
+      # - name: Upload coverage
+      #   uses: codecov/codecov-action@v5
+      #   with:
+      #     token: ${{ secrets.CODECOV_TOKEN }}
+  publish:
+    name: Publish to NPM
+    runs-on: ubuntu-latest
+    needs: [test]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-      - name: Deploy gh-pages
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+          ref: main
+          persist-credentials: false
+
+      # limit releases to version changes - https://github.com/EndBug/version-check
+      - name: Check version changes
+        uses: EndBug/version-check@36ff30f37c7deabe56a30caa043d127be658c425 # 2.1.5
+        id: version_check
+        with:
+          # diff the commits rather than commit message for version changes
+          diff-search: true
+
+      - name: Version update detected
+        if: steps.version_check.outputs.changed == 'true'
         run: |
-          git config --global user.email 'action@github.com'
-          git config --global user.name 'GitHub Action'
-          git fetch origin gh-pages
-          git worktree add gh-pages gh-pages
-          cd gh-pages
-          git rm -r .
-          mv ../dist/* .
-          touch .nojekyll
-          git add .
-          git commit -m "gh-pages deployment" || echo "Nothing to commit"
-          git push -f https://adazzle:${{secrets.GITHUB_TOKEN}}@github.com/adazzle/react-data-grid.git
+          echo "Version change found! New version: ${NEW_VERSION} (${TYPE})"
+        env:
+          NEW_VERSION: ${{ steps.version_check.outputs.version }}
+          TYPE: ${{ steps.version_check.outputs.type }}
+
+      - name: Setup .npmrc file for NPM registry
+        if: steps.version_check.outputs.changed == 'true'
+        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6
+        with:
+          node-version-file: .nvmrc
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        if: steps.version_check.outputs.changed == 'true'
+        run: yarn install --immutable
+
+      - name: Publish package to NPM
+        if: steps.version_check.outputs.changed == 'true'
+        run: npm publish
