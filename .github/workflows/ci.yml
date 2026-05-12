@@ -2,8 +2,10 @@ name: CI
 on:
   push:
     branches:
-      - main
+      - react-18
   pull_request:
+    branches:
+      - react-18
 
 jobs:
   test:
@@ -42,7 +44,7 @@ jobs:
     name: Publish to NPM
     runs-on: ubuntu-latest
     needs: [test]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/react-18'
     permissions:
       contents: read
       id-token: write
@@ -50,7 +52,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: main
+          ref: react-18
           persist-credentials: false
 
       # limit releases to version changes - https://github.com/EndBug/version-check
