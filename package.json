@@ -9,7 +9,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/grafana/react-data-grid.git"
+    "url": "http://github.com/grafana/react-data-grid.git"
   },
   "bugs": "https://github.com/grafana/react-data-grid/issues",
   "type": "module",
