@@ -82,6 +82,10 @@ jobs:
         if: steps.version_check.outputs.changed == 'true'
         run: yarn install --immutable
 
+      - name: Build package
+        if: steps.version_check.outputs.changed == 'true'
+        run: yarn build
+
       - name: Publish package to NPM
         if: steps.version_check.outputs.changed == 'true'
-        run: npm publish
+        run: npm publish --tag latest
