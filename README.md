@@ -18,6 +18,8 @@
 
 The DataGrid component is designed to handle large datasets efficiently while offering a rich set of features for customization and interactivity.
 
+_Note: This package is a fork of [react-data-grid](https://github.com/Comcast/react-data-grid) with support for React 18._
+
 ## Features
 
 - [React 19.0+](package.json) support
