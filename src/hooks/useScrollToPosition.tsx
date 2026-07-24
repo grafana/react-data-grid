@@ -19,6 +19,7 @@ export function useScrollToPosition({ gridRef }: Props) {
     setScrollToPosition,
     scrollToPositionElement: scrollToPosition && (
       <div
+        aria-hidden="true"
         ref={(div) => {
           if (div === null) return;
           const grid = gridRef.current!;

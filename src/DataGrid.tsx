@@ -991,6 +991,7 @@ export function DataGrid<R, SR = unknown, K extends Key = Key>(props: DataGridPr
     return (
       <div
         style={dragHandleStyle}
+        aria-hidden="true"
         className={classnames(
           cellDragHandleClassname,
           column.frozen && cellDragHandleFrozenClassname
