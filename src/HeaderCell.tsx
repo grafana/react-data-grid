@@ -278,6 +278,7 @@ export default function HeaderCell<R, SR>({
     <>
       {isDragging && (
         <div
+          aria-hidden="true"
           ref={dragImageRef}
           style={style}
           className={getCellClassname(column, column.headerCellClass, dragImageClassname)}

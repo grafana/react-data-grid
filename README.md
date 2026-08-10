@@ -6,6 +6,8 @@
 [![codecov-badge]][codecov-url]
 [![ci-badge]][ci-url]
 
+_Note: This package is a Grafana-maintained fork of [react-data-grid](https://github.com/Comcast/react-data-grid), published as `@grafana/react-data-grid`. It adds auto-height support for non-virtualized rendering and a few accessibility improvements on top of upstream._
+
 The DataGrid component is designed to handle large datasets efficiently while offering a rich set of features for customization and interactivity.
 
 ## Table of contents
@@ -881,7 +883,7 @@ function MyGrid() {
 
 Function to generate unique IDs for group rows. If not provided, a default implementation is used that concatenates parent and group keys with `__`.
 
-###### `rowHeight?: Maybe<number | ((args: RowHeightArgs<R>) => number)>`
+###### `rowHeight?: Maybe<number | string | ((args: RowHeightArgs<R>) => number)>`
 
 **Note:** Unlike `DataGrid`, the `rowHeight` function receives [`RowHeightArgs<R>`](#rowheightargstrow) which includes a `type` property to distinguish between regular rows and group rows:
 
