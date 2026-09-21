@@ -1,5 +1,6 @@
 import { page, userEvent } from 'vitest/browser';
 
+import { DataGrid } from '../../src';
 import type { Column, DataGridProps } from '../../src';
 import { safeTab, setup, testRowCount } from './utils';
 
@@ -107,6 +108,26 @@ test('rowHeight is "auto" sets gridTemplateRows to repeat(N, auto)', async () =>
   await setupGrid('auto');
 
   expect(grid.element().style.gridTemplateRows).toBe('repeat(1, 35px) repeat(50, auto)');
+});
+
+test('string rowHeight tolerates a zero-height viewport and subsequent resize', async () => {
+  const props = {
+    columns: [{ key: 'id', name: 'ID' }],
+    rows: [{ id: 0 }],
+    rowHeight: 'auto'
+  };
+  const { rerender } = await page.render(
+    <DataGrid {...props} style={{ height: 0, minHeight: 0, border: 0 }} />
+  );
+
+  await expect.element(grid).toHaveProperty('clientHeight', 0);
+  await testRowCount(1);
+
+  await rerender(<DataGrid {...props} style={{ height: 300 }} />);
+
+  await expect.poll(() => grid.element().clientHeight).toBeGreaterThan(0);
+  await testRowCount(1);
+  expect(grid.element().style.gridTemplateRows).toBe('repeat(1, 35px) repeat(1, auto)');
 });
 
 test('rowHeight as a string auto-disables virtualization and renders all rows', async () => {
