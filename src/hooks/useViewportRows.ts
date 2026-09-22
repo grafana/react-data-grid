@@ -44,11 +44,9 @@ export function useViewportRows<R>({
     }
 
     if (typeof rowHeight === 'string') {
-      if (!gridHeight) {
-        throw new Error(
-          'props.gridHeight is required when rowHeight is a string. This is needed to calculate the total height of the rows.'
-        );
-      }
+      // The measured viewport height can be zero, for example while the grid is hidden.
+      // Allow rendering until layout provides a usable height.
+      const gridHeightPx = gridHeight ?? 0;
 
       const getRowElementFirstCell = (element: Element, rowIdx: number): Element | null => {
         const nth = element.querySelector('.rdg-header-row') ? rowIdx + 2 : rowIdx + 1;
@@ -62,7 +60,7 @@ export function useViewportRows<R>({
       };
 
       return {
-        totalRowHeight: gridHeight,
+        totalRowHeight: gridHeightPx,
         gridTemplateRows: ` repeat(${rows.length}, ${rowHeight})`,
         getRowTop(rowIdx: number) {
           const element = gridRef?.current;
