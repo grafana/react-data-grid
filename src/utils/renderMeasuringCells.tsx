@@ -1,4 +1,4 @@
-import { css } from '@linaria/core';
+import { css } from 'ecij';
 
 import type { CalculatedColumn } from '../types';
 
@@ -14,6 +14,7 @@ export function renderMeasuringCells<R, SR>(viewportColumns: readonly Calculated
   return viewportColumns.map(({ key, idx, minWidth, maxWidth }) => (
     <div
       key={key}
+      aria-hidden="true"
       className={measuringCellClassname}
       style={{ gridColumnStart: idx + 1, minWidth, maxWidth }}
       data-measuring-cell-key={key}

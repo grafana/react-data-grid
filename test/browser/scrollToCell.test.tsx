@@ -1,96 +1,125 @@
-import { useRef } from 'react';
-import { page, userEvent } from '@vitest/browser/context';
+import { createRef } from 'react';
+import { page } from 'vitest/browser';
 
-import { DataGrid } from '../../src';
 import type { Column, DataGridHandle } from '../../src';
-import type { PartialPosition } from '../../src/ScrollToCell';
-import { getGrid } from './utils';
+import { setup } from './utils';
 
-type Row = undefined;
-
-const rows: readonly Row[] = new Array(50);
-const summaryRows: readonly Row[] = [undefined, undefined];
-
-const columns: Column<Row, Row>[] = [];
+const rows: readonly number[] = Array.from({ length: 50 }, (_, i) => i);
+const summaryRows: readonly number[] = Array.from({ length: 2 }, (_, i) => i + 50);
+const columns: Column<number, number>[] = [];
 
 for (let i = 0; i < 50; i++) {
   const key = String(i);
   columns.push({
     key,
     name: key,
-    frozen: i < 5
+    frozen: i < 5,
+    renderCell(props) {
+      return `${props.column.key}×${props.row}`;
+    },
+    renderSummaryCell(props) {
+      return `${props.column.key}×${props.row}`;
+    }
   });
 }
 
-let position: PartialPosition;
-
-function Grid() {
-  const ref = useRef<DataGridHandle>(null);
-  return (
-    <>
-      <button
-        type="button"
-        onClick={() => {
-          ref.current!.scrollToCell(position);
-        }}
-      >
-        Scroll to cell
-      </button>
-      <DataGrid
-        ref={ref}
-        columns={columns}
-        rows={rows}
-        topSummaryRows={summaryRows}
-        rowHeight={60}
-      />
-    </>
-  );
-}
-
-async function testScroll(p: PartialPosition) {
-  position = p;
-  await userEvent.click(page.getByRole('button'));
-}
-
 test('scrollToCell', async () => {
-  page.render(<Grid />);
-  const grid = getGrid().element();
-  validateScrollPosition(0, 0);
+  const ref = createRef<DataGridHandle>();
+  await setup({
+    ref,
+    columns,
+    rows,
+    topSummaryRows: summaryRows,
+    rowHeight: 60
+  });
+
+  expect(ref.current).toBeDefined();
+
+  await validateCellVisibility('0×0', true);
+  await validateCellVisibility('40×30', false);
+  await validateCellVisibility('0×51', true);
 
   // should scroll to a cell when a valid position is specified
-  await testScroll({ idx: 40, rowIdx: 30 });
-  validateScrollPosition(1572, 132);
+  ref.current!.scrollToCell({ idx: 40, rowIdx: 30 });
+  await validateCellVisibility('0×0', false);
+  await validateCellVisibility('40×30', true);
 
   // should scroll to a column when a valid idx is specified
-  await testScroll({ idx: 6 });
-  validateScrollPosition(1572, 50);
-  await testScroll({ idx: 40 });
-  validateScrollPosition(1572, 132);
+  ref.current!.scrollToCell({ idx: 6 });
+  await validateCellVisibility('6×30', true);
+  await validateCellVisibility('40×30', false);
+  ref.current!.scrollToCell({ idx: 40 });
+  await validateCellVisibility('6×30', false);
+  await validateCellVisibility('40×30', true);
 
   // should scroll to a row when a valid rowIdx is specified
-  await testScroll({ rowIdx: 1 });
-  validateScrollPosition(0, 132);
-  await testScroll({ rowIdx: 30 });
-  validateScrollPosition(1572, 132);
+  ref.current!.scrollToCell({ rowIdx: 1 });
+  await validateCellVisibility('40×1', true);
+  await validateCellVisibility('40×30', false);
+  ref.current!.scrollToCell({ rowIdx: 30 });
+  await validateCellVisibility('40×1', false);
+  await validateCellVisibility('40×30', true);
 
   // should not scroll if scroll to column is frozen
-  await testScroll({ idx: 2 });
-  validateScrollPosition(1572, 132);
+  ref.current!.scrollToCell({ idx: 2 });
+  await validateCellVisibility('40×30', true);
 
   // should not scroll if rowIdx is header row
-  await testScroll({ idx: -1 });
-  validateScrollPosition(1572, 132);
+  ref.current!.scrollToCell({ idx: -1 });
+  await validateCellVisibility('40×30', true);
 
   // should not scroll if rowIdx is summary row
-  await testScroll({ idx: 50 });
-  validateScrollPosition(1572, 132);
+  ref.current!.scrollToCell({ idx: 50 });
+  await validateCellVisibility('40×30', true);
 
   // should not scroll if position is out of bound
-  await testScroll({ idx: 60, rowIdx: 60 });
-  validateScrollPosition(1572, 132);
+  ref.current!.scrollToCell({ idx: 60, rowIdx: 60 });
+  await validateCellVisibility('40×30', true);
 
-  function validateScrollPosition(scrollTop: number, scrollLeft: number) {
-    expect(grid.scrollTop).toBe(scrollTop);
-    expect(grid.scrollLeft).toBe(scrollLeft);
-  }
+  // should not scroll vertically when scrolling to summary row
+  ref.current!.scrollToCell({ idx: 49, rowIdx: 51 });
+  await validateCellVisibility('49×30', true);
 });
+
+test('scrollToCell with end-frozen columns', async () => {
+  const ref = createRef<DataGridHandle>();
+  const endFrozenColumns: Column<number, number>[] = columns.map((column, i) => ({
+    ...column,
+    frozen: i < 5 ? true : i >= 48 ? 'end' : false
+  }));
+
+  await setup({
+    ref,
+    columns: endFrozenColumns,
+    rows,
+    topSummaryRows: summaryRows,
+    rowHeight: 60
+  });
+
+  // end-frozen columns are always visible, a far-right unfrozen column is not
+  await validateCellVisibility('48×0', true);
+  await validateCellVisibility('49×0', true);
+  await validateCellVisibility('40×0', false);
+
+  // should not scroll when scrolling to an end-frozen column
+  ref.current!.scrollToCell({ idx: 48 });
+  await validateCellVisibility('0×0', true);
+  await validateCellVisibility('40×0', false);
+  ref.current!.scrollToCell({ idx: 49 });
+  await validateCellVisibility('0×0', true);
+  await validateCellVisibility('40×0', false);
+
+  // should still scroll to an unfrozen column
+  ref.current!.scrollToCell({ idx: 40 });
+  await validateCellVisibility('40×0', true);
+});
+
+function validateCellVisibility(name: string, isVisible: boolean) {
+  const cell = page.getCell({ name });
+
+  if (isVisible) {
+    return expect.element(cell).toBeVisible();
+  }
+
+  return expect.element(cell).not.toBeInTheDocument();
+}

@@ -1,14 +1,13 @@
 import { useMemo, useState } from 'react';
 import { faker } from '@faker-js/faker';
-import { css } from '@linaria/core';
+import { createFileRoute } from '@tanstack/react-router';
+import { css } from 'ecij';
 
-import { DataGrid } from '../../src';
-import type { Column, RowsChangeData } from '../../src';
-import type { Direction } from '../../src/types';
+import { DataGrid, type Column, type Direction, type RowsChangeData } from '../../src';
 import { CellExpanderFormatter } from '../components';
 import { useDirection } from '../directionContext';
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/MasterDetail')({
   component: MasterDetail
 });
 
@@ -85,6 +84,8 @@ function MasterDetail() {
         cellClass(row) {
           return row.type === 'DETAIL'
             ? css`
+                /* allows shrinking the inner grid */
+                contain: inline-size;
                 padding: 24px;
               `
             : undefined;
@@ -129,6 +130,7 @@ function MasterDetail() {
 
   return (
     <DataGrid
+      aria-label="Master Detail Example"
       rowKeyGetter={rowKeyGetter}
       columns={columns}
       rows={rows}

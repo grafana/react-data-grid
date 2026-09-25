@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { faker } from '@faker-js/faker';
-import { css } from '@linaria/core';
+import { createFileRoute } from '@tanstack/react-router';
+import { css } from 'ecij';
 
-import { SelectColumn, TreeDataGrid } from '../../src';
-import type { Column } from '../../src';
+import { SelectColumn, TreeDataGrid, type Column } from '../../src';
 import { useDirection } from '../directionContext';
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/RowGrouping')({
   component: RowGrouping
 });
 
@@ -188,6 +188,7 @@ function RowGrouping() {
       </div>
 
       <TreeDataGrid
+        aria-label="Row Grouping Example"
         columns={columns}
         rows={rows}
         rowKeyGetter={rowKeyGetter}
@@ -205,7 +206,5 @@ function RowGrouping() {
 }
 
 function rowGrouper(rows: readonly Row[], columnKey: string) {
-  // @ts-expect-error
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return Object.groupBy(rows, (r) => r[columnKey]) as Record<string, readonly R[]>;
+  return Object.groupBy(rows, (r) => r[columnKey as keyof Row]) as Record<string, readonly Row[]>;
 }

@@ -1,10 +1,10 @@
 import { useCallback, useMemo, useState } from 'react';
+import { createFileRoute } from '@tanstack/react-router';
 
-import { DataGrid } from '../../src';
-import type { Column, ColumnWidths, SortColumn } from '../../src';
+import { DataGrid, type Column, type ColumnWidths, type SortColumn } from '../../src';
 import { useDirection } from '../directionContext';
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/ColumnsReordering')({
   component: ColumnsReordering
 });
 
@@ -120,12 +120,7 @@ function ColumnsReordering() {
       });
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (document.startViewTransition) {
-      document.startViewTransition(reorderColumns);
-    } else {
-      reorderColumns();
-    }
+    document.startViewTransition(reorderColumns);
   }
 
   function resetOrderAndWidths() {
@@ -146,6 +141,7 @@ function ColumnsReordering() {
         Reset Columns
       </button>
       <DataGrid
+        aria-label="Columns Reordering Example"
         columns={reorderedColumns}
         rows={sortedRows}
         sortColumns={sortColumns}

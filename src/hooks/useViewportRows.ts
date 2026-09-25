@@ -1,22 +1,37 @@
-import { useMemo } from 'react';
+import { useMemo, type RefObject } from 'react';
 
 import { floor, max, min } from '../utils';
 
-interface ViewportRowsArgs<R> {
+interface ViewportRowsBaseArgs<R> {
   rows: readonly R[];
-  rowHeight: number | ((row: R) => number);
   clientHeight: number;
   scrollTop: number;
   enableVirtualization: boolean;
+  gridHeight?: number;
 }
+
+interface ViewportRowsArgsStringHeight {
+  rowHeight: string;
+  gridRef: RefObject<HTMLDivElement | null>;
+  gridHeight: number;
+}
+
+interface ViewportRowsArgsRegularHeight<R> {
+  rowHeight: number | ((row: R) => number);
+}
+
+type ViewportRowsArgs<R> = ViewportRowsBaseArgs<R> &
+  (ViewportRowsArgsStringHeight | ViewportRowsArgsRegularHeight<R>);
 
 export function useViewportRows<R>({
   rows,
   rowHeight,
   clientHeight,
   scrollTop,
-  enableVirtualization
+  enableVirtualization,
+  ...rest
 }: ViewportRowsArgs<R>) {
+  const { gridRef, gridHeight } = rest as Partial<ViewportRowsArgsStringHeight>;
   const { totalRowHeight, gridTemplateRows, getRowTop, getRowHeight, findRowIdx } = useMemo(() => {
     if (typeof rowHeight === 'number') {
       return {
@@ -28,16 +43,108 @@ export function useViewportRows<R>({
       };
     }
 
-    let totalRowHeight = 0;
-    let gridTemplateRows = ' ';
+    if (typeof rowHeight === 'string') {
+      // The measured viewport height can be zero, for example while the grid is hidden.
+      // Allow rendering until layout provides a usable height.
+      const gridHeightPx = gridHeight ?? 0;
+
+      const getRowElementFirstCell = (element: Element, rowIdx: number): Element | null => {
+        const nth = element.querySelector('.rdg-header-row') ? rowIdx + 2 : rowIdx + 1;
+        return element.querySelector(`[role="row"][aria-rowindex="${nth}"] > [role="gridcell"]`);
+      };
+
+      const getRowYTop = (element: Element, rowIdx: number) => {
+        const cell = getRowElementFirstCell(element, rowIdx);
+        if (!cell) return -1;
+        return cell.getBoundingClientRect().top + element.scrollTop;
+      };
+
+      return {
+        totalRowHeight: gridHeightPx,
+        gridTemplateRows: ` repeat(${rows.length}, ${rowHeight})`,
+        getRowTop(rowIdx: number) {
+          const element = gridRef?.current;
+          if (!element) return -1;
+          const cell = getRowElementFirstCell(element, rowIdx);
+          if (!cell) return -1;
+          return cell.getBoundingClientRect().top + element.scrollTop;
+        },
+        getRowHeight(rowIdx: number) {
+          const element = gridRef?.current;
+          if (!element) return -1;
+          const cell = getRowElementFirstCell(element, rowIdx);
+          if (!cell) return -1;
+          return cell.clientHeight;
+        },
+        findRowIdx(offset: number) {
+          const element = gridRef?.current;
+          if (!element) return -1;
+          let start = 0;
+          let end = rows.length - 1;
+
+          while (start <= end) {
+            const middle = start + floor((end - start) / 2);
+            const currentScrollTop = getRowYTop(element, middle);
+            const prevScrollTop = getRowYTop(element, middle - 1);
+
+            if (currentScrollTop >= offset && prevScrollTop < offset) return middle;
+
+            if (currentScrollTop < offset) {
+              start = middle + 1;
+            } else if (currentScrollTop > offset) {
+              end = middle - 1;
+            }
+
+            if (start > end) return end;
+          }
+
+          return -1;
+        }
+      };
+    }
+
     // Calcule the height of all the rows upfront. This can cause performance issues
     // and we can consider using a similar approach as react-window
     // https://github.com/bvaughn/react-window/blob/b0a470cc264e9100afcaa1b78ed59d88f7914ad4/src/VariableSizeList.js#L68
-    const rowPositions = rows.map((row) => {
+    let totalRowHeight = 0;
+    let gridTemplateRows = '';
+    let currentHeight: number | null = null;
+    let repeatCount = 0;
+
+    const rowPositions = rows.map((row, index) => {
       const currentRowHeight = rowHeight(row);
-      const position = { top: totalRowHeight, height: currentRowHeight };
-      gridTemplateRows += `${currentRowHeight}px `;
+
+      const position = {
+        top: totalRowHeight,
+        height: currentRowHeight
+      };
       totalRowHeight += currentRowHeight;
+
+      if (currentHeight === null) {
+        currentHeight = currentRowHeight;
+        repeatCount = 1;
+      } else if (currentHeight === currentRowHeight) {
+        // If the current row height is the same as the previous one, increment the repeat count
+        repeatCount++;
+      } else {
+        if (repeatCount > 1) {
+          gridTemplateRows += `repeat(${repeatCount}, ${currentHeight}px) `;
+        } else {
+          gridTemplateRows += `${currentHeight}px `;
+        }
+
+        currentHeight = currentRowHeight;
+        repeatCount = 1;
+      }
+
+      if (index === rows.length - 1) {
+        if (repeatCount > 1) {
+          gridTemplateRows += `repeat(${repeatCount}, ${currentHeight}px)`;
+        } else {
+          gridTemplateRows += `${currentHeight}px`;
+        }
+      }
+
       return position;
     });
 
@@ -70,15 +177,21 @@ export function useViewportRows<R>({
         return 0;
       }
     };
-  }, [rowHeight, rows]);
+  }, [rowHeight, rows, gridRef, gridHeight]);
 
   let rowOverscanStartIdx = 0;
   let rowOverscanEndIdx = rows.length - 1;
 
   if (enableVirtualization) {
     const overscanThreshold = 4;
+    // `findRowIdx` only reads `gridRef.current` in the string-rowHeight branch,
+    // which is unreachable here because `enableVirtualization` is forced off when
+    // `rowHeight` is a string (see DataGrid.tsx).
+    /* eslint-disable react-hooks/refs */
     const rowVisibleStartIdx = findRowIdx(scrollTop);
     const rowVisibleEndIdx = findRowIdx(scrollTop + clientHeight);
+    /* eslint-enable react-hooks/refs */
+
     rowOverscanStartIdx = max(0, rowVisibleStartIdx - overscanThreshold);
     rowOverscanEndIdx = min(rows.length - 1, rowVisibleEndIdx + overscanThreshold);
   }

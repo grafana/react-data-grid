@@ -1,9 +1,10 @@
-import { DataGrid } from '../../src';
-import type { Column } from '../../src';
+import { createFileRoute } from '@tanstack/react-router';
+
+import { DataGrid, type Column } from '../../src';
 import { renderCoordinates } from '../renderers';
 import { useDirection } from '../directionContext';
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/ResizableGrid')({
   component: ResizableGrid
 });
 
@@ -26,6 +27,7 @@ function ResizableGrid() {
 
   return (
     <DataGrid
+      aria-label="Resizable Grid Example"
       columns={columns}
       rows={rows}
       className="fill-grid"

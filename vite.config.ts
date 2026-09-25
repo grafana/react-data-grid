@@ -1,127 +1,207 @@
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import react from '@vitejs/plugin-react';
-import wyw from '@wyw-in-js/vite';
-import browserslist from 'browserslist';
-import { defineConfig } from 'vite';
+import { playwright, type PlaywrightProviderOptions } from '@vitest/browser-playwright';
+import { ecij } from 'ecij/plugin';
+import { Features } from 'lightningcss';
+import { defineConfig, type ViteUserConfig } from 'vitest/config';
 import type { BrowserCommand } from 'vitest/node';
 
 const isCI = process.env.CI === 'true';
-const isTest = process.env.NODE_ENV === 'test';
+const isTest = process.env.VITEST === 'true';
 
 // TODO: remove when `userEvent.pointer` is supported
-const resizeColumn: BrowserCommand<[resizeBy: number | readonly number[]]> = async (
-  context,
+const resizeColumn: BrowserCommand<[name: string, resizeBy: number | readonly number[]]> = async (
+  { page, iframe },
+  name,
   resizeBy
 ) => {
-  const page = context.page;
-  const frame = await context.frame();
-  const resizeHandle = frame.locator('[role="columnheader"][aria-colindex="2"] div');
+  const resizeHandle = iframe
+    .getByRole('columnheader', { name, exact: true })
+    .locator('.rdg-resize-handle');
   const { x, y } = (await resizeHandle.boundingBox())!;
-  await resizeHandle.hover({
-    position: { x: 5, y: 5 }
-  });
+  await page.mouse.move(x + 5, y + 5);
   await page.mouse.down();
   resizeBy = Array.isArray(resizeBy) ? resizeBy : [resizeBy];
   let newX = x + 5;
   for (const value of resizeBy) {
     newX += value;
-    await page.mouse.move(newX, y);
+    await page.mouse.move(newX, y + 5);
   }
   await page.mouse.up();
 };
 
 // TODO: remove when `userEvent.pointer` is supported
-const dragFill: BrowserCommand<[from: string, to: string]> = async (context, from, to) => {
-  const page = context.page;
-  const frame = await context.frame();
-  await frame.getByRole('gridcell', { name: from }).click();
-  await frame.locator('.rdg-cell-drag-handle').hover();
+const dragFill: BrowserCommand<[from: string, to: string]> = async ({ page, iframe }, from, to) => {
+  await iframe.getByRole('gridcell', { name: from, exact: true }).click();
+  await iframe.locator('.rdg-cell-drag-handle').hover();
   await page.mouse.down();
-  const toCell = frame.getByRole('gridcell', { name: to });
+  const toCell = iframe.getByRole('gridcell', { name: to, exact: true });
   await toCell.hover();
   await page.mouse.up();
 };
 
+const actionTimeout = 2000;
 const viewport = { width: 1920, height: 1080 } as const;
+const playwrightOptions: PlaywrightProviderOptions = {
+  actionTimeout,
+  contextOptions: {
+    viewport
+  }
+};
 
-export default defineConfig(({ command, isPreview }) => ({
-  base: '/react-data-grid/',
-  cacheDir: '.cache/vite',
-  clearScreen: false,
-  build: {
-    target: browserslist().map((version) => version.replace(' ', '')),
-    modulePreload: { polyfill: false },
-    sourcemap: true,
-    reportCompressedSize: false
-  },
-  plugins: [
-    (!isTest || isPreview) &&
-      tanstackRouter({
-        target: 'react',
-        generatedRouteTree: 'website/routeTree.gen.ts',
-        routesDirectory: 'website/routes',
-        autoCodeSplitting: true,
-        verboseFileRoutes: false
-      }),
-    react({
-      exclude: ['./.cache/**/*']
-    }),
-    wyw({
-      exclude: ['./.cache/**/*', '**/*.d.ts', '**/*.gen.ts'],
-      preprocessor: 'none',
-      displayName: command === 'serve'
-    })
-  ],
-  server: {
-    open: true
-  },
-  optimizeDeps: {
-    include: ['@vitest/coverage-v8/browser']
-  },
-  test: {
-    globals: true,
-    coverage: {
-      provider: 'v8',
-      enabled: isCI,
-      include: ['src/**/*.{ts,tsx}'],
-      reporter: ['json']
-    },
-    testTimeout: isCI ? 10000 : 5000,
-    restoreMocks: true,
-    sequence: {
-      shuffle: true
-    },
-    projects: [
-      {
-        extends: true,
-        test: {
-          name: 'browser',
-          include: ['test/browser/**/*.test.*'],
-          browser: {
-            enabled: true,
-            provider: 'playwright',
-            instances: [
+export default defineConfig(
+  ({ isPreview }): ViteUserConfig => ({
+    base: '/react-data-grid/',
+    cacheDir: '.cache/vite',
+    clearScreen: false,
+    build: {
+      chunkImportMap: true,
+      modulePreload: { polyfill: false },
+      sourcemap: true,
+      rolldownOptions: {
+        output: {
+          codeSplitting: {
+            groups: [
               {
-                browser: 'chromium',
-                context: { viewport }
+                name: 'faker',
+                test: '@faker-js/faker'
               }
-            ],
-            commands: { resizeColumn, dragFill },
-            viewport,
-            headless: true,
-            screenshotFailures: process.env.CI !== 'true'
-          },
-          setupFiles: ['test/setupBrowser.ts']
-        }
-      },
-      {
-        extends: true,
-        test: {
-          name: 'node',
-          include: ['test/node/**/*.test.*'],
-          environment: 'node'
+            ]
+          }
         }
       }
-    ]
-  }
-}));
+    },
+    css: {
+      transformer: 'lightningcss',
+      lightningcss: {
+        // https://github.com/parcel-bundler/lightningcss/issues/873
+        exclude: Features.Nesting | Features.LightDark
+      }
+    },
+    plugins: isPreview
+      ? []
+      : [
+          ecij(),
+          !isTest &&
+            tanstackRouter({
+              target: 'react',
+              generatedRouteTree: 'website/routeTree.gen.ts',
+              routesDirectory: 'website/routes',
+              autoCodeSplitting: true
+            }),
+          react()
+        ],
+    server: {
+      open: true
+    },
+    test: {
+      dir: 'test',
+      globals: true,
+      printConsoleTrace: true,
+      env: {
+        // @ts-expect-error
+        CI: isCI
+      },
+      coverage: {
+        provider: 'istanbul',
+        enabled: isCI,
+        include: ['src/**/*.{ts,tsx}'],
+        reporter: ['json']
+      },
+      restoreMocks: true,
+      sequence: {
+        shuffle: {
+          files: false,
+          tests: true
+        }
+      },
+      expect: {
+        poll: {
+          timeout: actionTimeout
+        }
+      },
+      slowTestThreshold: 1000,
+      browser: {
+        headless: true,
+        ui: false,
+        viewport,
+        commands: { resizeColumn, dragFill },
+        expect: {
+          toMatchScreenshot: {
+            resolveScreenshotPath({
+              root,
+              testFileDirectory,
+              testFileName,
+              arg,
+              browserName,
+              platform,
+              ext
+            }) {
+              return `${root}/${testFileDirectory}/screenshots/${testFileName}/${arg}-${browserName}-${platform}${ext}`;
+            }
+          }
+        },
+        locators: {
+          exact: true
+        },
+        instances: [
+          {
+            browser: 'chromium',
+            provider: playwright({
+              ...playwrightOptions,
+              launchOptions: {
+                channel: 'chromium',
+                args: [
+                  '--disable-renderer-accessibility',
+                  '--disable-platform-accessibility-integration'
+                ]
+              }
+            })
+          },
+          {
+            browser: 'firefox',
+            provider: playwright({
+              ...playwrightOptions,
+              launchOptions: {
+                firefoxUserPrefs: {
+                  'accessibility.force_disabled': 1
+                }
+              }
+            }),
+            // TODO: remove when FF tests are stable
+            fileParallelism: false
+          }
+        ]
+      },
+      projects: [
+        {
+          extends: true,
+          test: {
+            name: 'browser',
+            include: ['browser/**/*.test.*'],
+            browser: { enabled: true },
+            setupFiles: ['test/browser/styles.css', 'test/setupBrowser.ts', 'test/failOnConsole.ts']
+          }
+        },
+        {
+          extends: true,
+          test: {
+            name: 'visual',
+            include: ['visual/*.test.*'],
+            browser: { enabled: true },
+            setupFiles: ['test/setupBrowser.ts', 'test/failOnConsole.ts']
+          }
+        },
+        {
+          extends: true,
+          test: {
+            name: 'node',
+            include: ['node/**/*.test.*'],
+            environment: 'node',
+            setupFiles: ['test/failOnConsole.ts']
+          }
+        }
+      ]
+    }
+  })
+);

@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { page, userEvent } from '@vitest/browser/context';
+import { page, userEvent } from 'vitest/browser';
 
 import { DataGrid, SelectColumn } from '../../src';
 import type { Column } from '../../src';
-import { getCellsAtRowIndex, getRows } from './utils';
+
+const rows = page.getRow();
+const headerCheckbox = page.getSelectAllCheckbox();
 
 interface Row {
   id: number;
@@ -12,8 +14,8 @@ interface Row {
 const columns: readonly Column<Row>[] = [
   SelectColumn,
   {
-    key: 'name',
-    name: 'Name'
+    key: 'id',
+    name: 'ID'
   }
 ];
 
@@ -45,128 +47,128 @@ function RowSelectionTest({
 }
 
 function setup(initialRows = defaultRows) {
-  page.render(<RowSelectionTest initialRows={initialRows} />);
+  return page.render(<RowSelectionTest initialRows={initialRows} />);
 }
 
 function testSelection(rowIdx: number, isSelected: boolean) {
-  expect(getRows()[rowIdx]).toHaveAttribute('aria-selected', isSelected ? 'true' : 'false');
+  return expect
+    .element(rows.nth(rowIdx))
+    .toHaveAttribute('aria-selected', isSelected ? 'true' : 'false');
 }
 
-async function toggleSelection(rowIdx: number, shift = false) {
-  const element = page.getByRole('row').all()[rowIdx + 1].getByRole('checkbox', { name: 'Select' });
+async function toggleSelection(rowIdx: number, shift = false, force = false) {
+  const checkbox = rows.nth(rowIdx).getByRole('checkbox', { name: 'Select' });
   if (shift) await userEvent.keyboard('{Shift>}');
-  await userEvent.click(element, { force: true });
+  await userEvent.click(checkbox, { force });
   if (shift) await userEvent.keyboard('{/Shift}');
 }
 
 test('toggle selection when checkbox is clicked', async () => {
-  setup();
+  await setup();
   await toggleSelection(0);
-  testSelection(0, true);
+  await testSelection(0, true);
   await toggleSelection(1);
-  testSelection(1, true);
+  await testSelection(1, true);
 
   await toggleSelection(0);
-  testSelection(0, false);
+  await testSelection(0, false);
   await toggleSelection(1);
-  testSelection(1, false);
+  await testSelection(1, false);
 });
 
 test('toggle selection using keyboard', async () => {
-  setup();
-  testSelection(0, false);
-  await userEvent.click(getCellsAtRowIndex(0)[0]);
-  testSelection(0, true);
+  await setup();
+  await testSelection(0, false);
+  await userEvent.click(rows.nth(0).getByRole('checkbox', { name: 'Select' }));
+  await testSelection(0, true);
   await userEvent.keyboard(' ');
-  testSelection(0, false);
+  await testSelection(0, false);
   await userEvent.keyboard(' ');
-  testSelection(0, true);
+  await testSelection(0, true);
   await userEvent.keyboard('{arrowdown} ');
-  testSelection(1, true);
+  await testSelection(1, true);
   await userEvent.keyboard('{arrowup} ');
-  testSelection(0, false);
+  await testSelection(0, false);
 });
 
 test('should partially select header checkbox', async () => {
-  setup();
-  const headerCheckbox = page.getByRole('checkbox', { name: 'Select All' }).element();
-  expect(headerCheckbox).not.toBeChecked();
-  expect(headerCheckbox).not.toBePartiallyChecked();
+  await setup();
+  await expect.element(headerCheckbox).not.toBeChecked();
+  await expect.element(headerCheckbox).not.toBePartiallyChecked();
 
   await toggleSelection(0);
-  expect(headerCheckbox).not.toBeChecked();
-  expect(headerCheckbox).toBePartiallyChecked();
+  await expect.element(headerCheckbox).not.toBeChecked();
+  await expect.element(headerCheckbox).toBePartiallyChecked();
 
   await toggleSelection(1);
-  expect(headerCheckbox).not.toBeChecked();
-  expect(headerCheckbox).toBePartiallyChecked();
+  await expect.element(headerCheckbox).not.toBeChecked();
+  await expect.element(headerCheckbox).toBePartiallyChecked();
 
   await toggleSelection(2);
-  expect(headerCheckbox).toBeChecked();
-  expect(headerCheckbox).not.toBePartiallyChecked();
+  await expect.element(headerCheckbox).toBeChecked();
+  await expect.element(headerCheckbox).not.toBePartiallyChecked();
 
   await toggleSelection(0);
-  expect(headerCheckbox).not.toBeChecked();
-  expect(headerCheckbox).toBePartiallyChecked();
+  await expect.element(headerCheckbox).not.toBeChecked();
+  await expect.element(headerCheckbox).toBePartiallyChecked();
 
   await userEvent.click(headerCheckbox);
-  testSelection(0, false);
-  testSelection(1, false);
-  testSelection(2, false);
+  await testSelection(0, false);
+  await testSelection(1, false);
+  await testSelection(2, false);
 
   await userEvent.click(headerCheckbox);
-  testSelection(0, true);
-  testSelection(1, true);
-  testSelection(2, true);
+  await testSelection(0, true);
+  await testSelection(1, true);
+  await testSelection(2, true);
 });
 
 test('should not select row when isRowSelectionDisabled returns true', async () => {
-  page.render(
+  await page.render(
     <RowSelectionTest initialRows={defaultRows} isRowSelectionDisabled={(row) => row.id === 2} />
   );
   await toggleSelection(0);
-  testSelection(0, true);
-  await toggleSelection(1);
-  testSelection(1, false);
+  await testSelection(0, true);
+  await toggleSelection(1, false, true); // force click even if disabled
+  await testSelection(1, false);
   await toggleSelection(2);
-  testSelection(2, true);
+  await testSelection(2, true);
 
-  await userEvent.click(page.getByRole('checkbox', { name: 'Select All' }));
+  await userEvent.click(headerCheckbox);
   await toggleSelection(0);
   await toggleSelection(2, true);
-  testSelection(0, true);
-  testSelection(1, false);
-  testSelection(2, true);
+  await testSelection(0, true);
+  await testSelection(1, false);
+  await testSelection(2, true);
 });
 
 test('select/deselect all rows when header checkbox is clicked', async () => {
-  setup();
-  const headerCheckbox = page.getByRole('checkbox', { name: 'Select All' }).element();
-  expect(headerCheckbox).not.toBeChecked();
+  await setup();
+  await expect.element(headerCheckbox).not.toBeChecked();
   await userEvent.click(headerCheckbox);
-  testSelection(0, true);
-  testSelection(1, true);
-  testSelection(2, true);
+  await testSelection(0, true);
+  await testSelection(1, true);
+  await testSelection(2, true);
 
   // deselecting a row should toggle header
   await toggleSelection(0);
-  expect(headerCheckbox).not.toBeChecked();
+  await expect.element(headerCheckbox).not.toBeChecked();
   await toggleSelection(0);
-  expect(headerCheckbox).toBeChecked();
+  await expect.element(headerCheckbox).toBeChecked();
 
   await userEvent.click(headerCheckbox);
-  testSelection(0, false);
-  testSelection(1, false);
-  testSelection(2, false);
+  await testSelection(0, false);
+  await testSelection(1, false);
+  await testSelection(2, false);
 });
 
 test('header checkbox is not checked when there are no rows', async () => {
-  setup([]);
-  await expect.element(page.getByRole('checkbox', { name: 'Select All' })).not.toBeChecked();
+  await setup([]);
+  await expect.element(headerCheckbox).not.toBeChecked();
 });
 
 test('header checkbox is not necessarily checked when selectedRows.size === rows.length', async () => {
-  page.render(
+  await page.render(
     <DataGrid
       rowKeyGetter={rowKeyGetter}
       columns={columns}
@@ -175,11 +177,11 @@ test('header checkbox is not necessarily checked when selectedRows.size === rows
     />
   );
 
-  await expect.element(page.getByRole('checkbox', { name: 'Select All' })).not.toBeChecked();
+  await expect.element(headerCheckbox).not.toBeChecked();
 });
 
 test('header checkbox is not necessarily checked when selectedRows.size > rows.length', async () => {
-  page.render(
+  await page.render(
     <DataGrid
       rowKeyGetter={rowKeyGetter}
       columns={columns}
@@ -188,7 +190,7 @@ test('header checkbox is not necessarily checked when selectedRows.size > rows.l
     />
   );
 
-  await expect.element(page.getByRole('checkbox', { name: 'Select All' })).not.toBeChecked();
+  await expect.element(headerCheckbox).not.toBeChecked();
 });
 
 test('extra keys are preserved when updating the selectedRows Set', async () => {
@@ -200,6 +202,7 @@ test('extra keys are preserved when updating the selectedRows Set', async () => 
 
     function onSelectedRowsChange(selectedRows: Set<number>) {
       setSelectedRows(selectedRows);
+      // eslint-disable-next-line @eslint-react/immutability
       set = selectedRows;
     }
 
@@ -209,14 +212,13 @@ test('extra keys are preserved when updating the selectedRows Set', async () => 
         columns={columns}
         rows={defaultRows}
         selectedRows={selectedRows}
+        // eslint-disable-next-line @eslint-react/immutability
         onSelectedRowsChange={onSelectedRowsChange}
       />
     );
   }
 
-  page.render(<Test />);
-
-  const headerCheckbox = page.getByRole('checkbox', { name: 'Select All' }).element();
+  await page.render(<Test />);
 
   await toggleSelection(1);
   expect(set).toStrictEqual(new Set([...initialSet, 2]));
@@ -238,26 +240,44 @@ test('extra keys are preserved when updating the selectedRows Set', async () => 
 });
 
 test('select/deselect rows using shift click', async () => {
-  setup();
+  await setup();
+
+  // forward selection
   await toggleSelection(0);
   await toggleSelection(2, true);
-  testSelection(0, true);
-  testSelection(1, true);
-  testSelection(2, true);
+  await testSelection(0, true);
+  await testSelection(1, true);
+  await testSelection(2, true);
+
+  // forward deselection
   await toggleSelection(0);
   await toggleSelection(2, true);
-  testSelection(0, false);
-  testSelection(1, false);
-  testSelection(2, false);
+  await testSelection(0, false);
+  await testSelection(1, false);
+  await testSelection(2, false);
+
+  // backward selection
+  await toggleSelection(2);
+  await toggleSelection(0, true);
+  await testSelection(0, true);
+  await testSelection(1, true);
+  await testSelection(2, true);
+
+  // backward deselection
+  await toggleSelection(2);
+  await toggleSelection(0, true);
+  await testSelection(0, false);
+  await testSelection(1, false);
+  await testSelection(2, false);
 });
 
 test('select rows using shift space', async () => {
-  setup();
-  await userEvent.click(getCellsAtRowIndex(0)[1]);
+  await setup();
+  await userEvent.click(page.getCell({ name: '1' }));
   await userEvent.keyboard('{Shift>} {/Shift}');
-  testSelection(0, true);
+  await testSelection(0, true);
   await userEvent.keyboard(' ');
-  testSelection(0, true);
+  await testSelection(0, true);
   await userEvent.keyboard('{Shift>} {/Shift}');
-  testSelection(0, false);
+  await testSelection(0, false);
 });

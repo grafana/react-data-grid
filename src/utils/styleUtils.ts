@@ -1,12 +1,6 @@
-import type { CSSProperties } from 'react';
-import clsx from 'clsx';
-
-import type { CalculatedColumn, CalculatedColumnOrColumnGroup } from '../types';
-import { cellClassname, cellFrozenClassname } from '../style/cell';
-
-export function getRowStyle(rowIdx: number): CSSProperties {
-  return { '--rdg-grid-row-start': rowIdx } as unknown as CSSProperties;
-}
+import type { CalculatedColumn, CalculatedColumnOrColumnGroup, Maybe } from '../types';
+import { isStartFrozen } from './frozenColumnUtils';
+import { cellClassname, cellFrozenStartClassname, cellFrozenEndClassname } from '../style/cell';
 
 export function getHeaderCellStyle<R, SR>(
   column: CalculatedColumnOrColumnGroup<R, SR>,
@@ -41,19 +35,36 @@ export function getCellStyle<R, SR>(
   return {
     gridColumnStart: index,
     gridColumnEnd: index + colSpan,
-    insetInlineStart: column.frozen ? `var(--rdg-frozen-left-${column.idx})` : undefined
+    insetInlineStart: isStartFrozen(column.frozen)
+      ? `var(--rdg-frozen-start-${column.idx})`
+      : undefined,
+    insetInlineEnd:
+      column.frozen === 'end' ? `var(--rdg-frozen-end-${column.idx + colSpan - 1})` : undefined
   };
+}
+
+type ClassValue = Maybe<string | false>;
+
+export function classnames(...args: readonly ClassValue[]) {
+  let classname = '';
+
+  for (const arg of args) {
+    if (typeof arg === 'string') {
+      classname += ` ${arg}`;
+    }
+  }
+
+  return classname.slice(1);
 }
 
 export function getCellClassname<R, SR>(
   column: CalculatedColumn<R, SR>,
-  ...extraClasses: Parameters<typeof clsx>
+  ...extraClasses: readonly ClassValue[]
 ): string {
-  return clsx(
+  return classnames(
     cellClassname,
-    {
-      [cellFrozenClassname]: column.frozen
-    },
+    isStartFrozen(column.frozen) && cellFrozenStartClassname,
+    column.frozen === 'end' && cellFrozenEndClassname,
     ...extraClasses
   );
 }

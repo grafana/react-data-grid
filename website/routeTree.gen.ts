@@ -8,124 +8,33 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import type { CreateFileRoute, FileRoutesByPath } from '@tanstack/react-router'
-
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as VariableRowHeightRouteImport } from './routes/VariableRowHeight'
-import { Route as TreeViewRouteImport } from './routes/TreeView'
-import { Route as ScrollToCellRouteImport } from './routes/ScrollToCell'
-import { Route as RowsReorderingRouteImport } from './routes/RowsReordering'
-import { Route as RowGroupingRouteImport } from './routes/RowGrouping'
-import { Route as ResizableGridRouteImport } from './routes/ResizableGrid'
-import { Route as NoRowsRouteImport } from './routes/NoRows'
-import { Route as MillionCellsRouteImport } from './routes/MillionCells'
-import { Route as MasterDetailRouteImport } from './routes/MasterDetail'
-import { Route as InfiniteScrollingRouteImport } from './routes/InfiniteScrolling'
-import { Route as HeaderFiltersRouteImport } from './routes/HeaderFilters'
-import { Route as CustomizableRenderersRouteImport } from './routes/CustomizableRenderers'
-import { Route as ContextMenuRouteImport } from './routes/ContextMenu'
-import { Route as CommonFeaturesRouteImport } from './routes/CommonFeatures'
-import { Route as ColumnsReorderingRouteImport } from './routes/ColumnsReordering'
-import { Route as ColumnSpanningRouteImport } from './routes/ColumnSpanning'
-import { Route as ColumnGroupingRouteImport } from './routes/ColumnGrouping'
-import { Route as CellNavigationRouteImport } from './routes/CellNavigation'
-import { Route as AnimationRouteImport } from './routes/Animation'
-import { Route as AllFeaturesRouteImport } from './routes/AllFeatures'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AllFeaturesRouteImport } from './routes/AllFeatures'
+import { Route as AnimationRouteImport } from './routes/Animation'
+import { Route as CellNavigationRouteImport } from './routes/CellNavigation'
+import { Route as ColumnGroupingRouteImport } from './routes/ColumnGrouping'
+import { Route as ColumnSpanningRouteImport } from './routes/ColumnSpanning'
+import { Route as ColumnsReorderingRouteImport } from './routes/ColumnsReordering'
+import { Route as CommonFeaturesRouteImport } from './routes/CommonFeatures'
+import { Route as ContextMenuRouteImport } from './routes/ContextMenu'
+import { Route as CustomizableRenderersRouteImport } from './routes/CustomizableRenderers'
+import { Route as DynamicHeightCellsRouteImport } from './routes/DynamicHeightCells'
+import { Route as HeaderFiltersRouteImport } from './routes/HeaderFilters'
+import { Route as InfiniteScrollingRouteImport } from './routes/InfiniteScrolling'
+import { Route as MasterDetailRouteImport } from './routes/MasterDetail'
+import { Route as MillionCellsRouteImport } from './routes/MillionCells'
+import { Route as NoRowsRouteImport } from './routes/NoRows'
+import { Route as ResizableGridRouteImport } from './routes/ResizableGrid'
+import { Route as RowGroupingRouteImport } from './routes/RowGrouping'
+import { Route as RowsReorderingRouteImport } from './routes/RowsReordering'
+import { Route as ScrollToCellRouteImport } from './routes/ScrollToCell'
+import { Route as TreeViewRouteImport } from './routes/TreeView'
+import { Route as VariableRowHeightRouteImport } from './routes/VariableRowHeight'
 
-const VariableRowHeightRoute = VariableRowHeightRouteImport.update({
-  id: '/VariableRowHeight',
-  path: '/VariableRowHeight',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TreeViewRoute = TreeViewRouteImport.update({
-  id: '/TreeView',
-  path: '/TreeView',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ScrollToCellRoute = ScrollToCellRouteImport.update({
-  id: '/ScrollToCell',
-  path: '/ScrollToCell',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RowsReorderingRoute = RowsReorderingRouteImport.update({
-  id: '/RowsReordering',
-  path: '/RowsReordering',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RowGroupingRoute = RowGroupingRouteImport.update({
-  id: '/RowGrouping',
-  path: '/RowGrouping',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ResizableGridRoute = ResizableGridRouteImport.update({
-  id: '/ResizableGrid',
-  path: '/ResizableGrid',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NoRowsRoute = NoRowsRouteImport.update({
-  id: '/NoRows',
-  path: '/NoRows',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MillionCellsRoute = MillionCellsRouteImport.update({
-  id: '/MillionCells',
-  path: '/MillionCells',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MasterDetailRoute = MasterDetailRouteImport.update({
-  id: '/MasterDetail',
-  path: '/MasterDetail',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const InfiniteScrollingRoute = InfiniteScrollingRouteImport.update({
-  id: '/InfiniteScrolling',
-  path: '/InfiniteScrolling',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HeaderFiltersRoute = HeaderFiltersRouteImport.update({
-  id: '/HeaderFilters',
-  path: '/HeaderFilters',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CustomizableRenderersRoute = CustomizableRenderersRouteImport.update({
-  id: '/CustomizableRenderers',
-  path: '/CustomizableRenderers',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContextMenuRoute = ContextMenuRouteImport.update({
-  id: '/ContextMenu',
-  path: '/ContextMenu',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CommonFeaturesRoute = CommonFeaturesRouteImport.update({
-  id: '/CommonFeatures',
-  path: '/CommonFeatures',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ColumnsReorderingRoute = ColumnsReorderingRouteImport.update({
-  id: '/ColumnsReordering',
-  path: '/ColumnsReordering',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ColumnSpanningRoute = ColumnSpanningRouteImport.update({
-  id: '/ColumnSpanning',
-  path: '/ColumnSpanning',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ColumnGroupingRoute = ColumnGroupingRouteImport.update({
-  id: '/ColumnGrouping',
-  path: '/ColumnGrouping',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CellNavigationRoute = CellNavigationRouteImport.update({
-  id: '/CellNavigation',
-  path: '/CellNavigation',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AnimationRoute = AnimationRouteImport.update({
-  id: '/Animation',
-  path: '/Animation',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AllFeaturesRoute = AllFeaturesRouteImport.update({
@@ -133,9 +42,104 @@ const AllFeaturesRoute = AllFeaturesRouteImport.update({
   path: '/AllFeatures',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AnimationRoute = AnimationRouteImport.update({
+  id: '/Animation',
+  path: '/Animation',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CellNavigationRoute = CellNavigationRouteImport.update({
+  id: '/CellNavigation',
+  path: '/CellNavigation',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ColumnGroupingRoute = ColumnGroupingRouteImport.update({
+  id: '/ColumnGrouping',
+  path: '/ColumnGrouping',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ColumnSpanningRoute = ColumnSpanningRouteImport.update({
+  id: '/ColumnSpanning',
+  path: '/ColumnSpanning',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ColumnsReorderingRoute = ColumnsReorderingRouteImport.update({
+  id: '/ColumnsReordering',
+  path: '/ColumnsReordering',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CommonFeaturesRoute = CommonFeaturesRouteImport.update({
+  id: '/CommonFeatures',
+  path: '/CommonFeatures',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContextMenuRoute = ContextMenuRouteImport.update({
+  id: '/ContextMenu',
+  path: '/ContextMenu',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CustomizableRenderersRoute = CustomizableRenderersRouteImport.update({
+  id: '/CustomizableRenderers',
+  path: '/CustomizableRenderers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DynamicHeightCellsRoute = DynamicHeightCellsRouteImport.update({
+  id: '/DynamicHeightCells',
+  path: '/DynamicHeightCells',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HeaderFiltersRoute = HeaderFiltersRouteImport.update({
+  id: '/HeaderFilters',
+  path: '/HeaderFilters',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InfiniteScrollingRoute = InfiniteScrollingRouteImport.update({
+  id: '/InfiniteScrolling',
+  path: '/InfiniteScrolling',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MasterDetailRoute = MasterDetailRouteImport.update({
+  id: '/MasterDetail',
+  path: '/MasterDetail',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MillionCellsRoute = MillionCellsRouteImport.update({
+  id: '/MillionCells',
+  path: '/MillionCells',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NoRowsRoute = NoRowsRouteImport.update({
+  id: '/NoRows',
+  path: '/NoRows',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResizableGridRoute = ResizableGridRouteImport.update({
+  id: '/ResizableGrid',
+  path: '/ResizableGrid',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RowGroupingRoute = RowGroupingRouteImport.update({
+  id: '/RowGrouping',
+  path: '/RowGrouping',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RowsReorderingRoute = RowsReorderingRouteImport.update({
+  id: '/RowsReordering',
+  path: '/RowsReordering',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ScrollToCellRoute = ScrollToCellRouteImport.update({
+  id: '/ScrollToCell',
+  path: '/ScrollToCell',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TreeViewRoute = TreeViewRouteImport.update({
+  id: '/TreeView',
+  path: '/TreeView',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VariableRowHeightRoute = VariableRowHeightRouteImport.update({
+  id: '/VariableRowHeight',
+  path: '/VariableRowHeight',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -150,6 +154,7 @@ export interface FileRoutesByFullPath {
   '/CommonFeatures': typeof CommonFeaturesRoute
   '/ContextMenu': typeof ContextMenuRoute
   '/CustomizableRenderers': typeof CustomizableRenderersRoute
+  '/DynamicHeightCells': typeof DynamicHeightCellsRoute
   '/HeaderFilters': typeof HeaderFiltersRoute
   '/InfiniteScrolling': typeof InfiniteScrollingRoute
   '/MasterDetail': typeof MasterDetailRoute
@@ -173,6 +178,7 @@ export interface FileRoutesByTo {
   '/CommonFeatures': typeof CommonFeaturesRoute
   '/ContextMenu': typeof ContextMenuRoute
   '/CustomizableRenderers': typeof CustomizableRenderersRoute
+  '/DynamicHeightCells': typeof DynamicHeightCellsRoute
   '/HeaderFilters': typeof HeaderFiltersRoute
   '/InfiniteScrolling': typeof InfiniteScrollingRoute
   '/MasterDetail': typeof MasterDetailRoute
@@ -197,6 +203,7 @@ export interface FileRoutesById {
   '/CommonFeatures': typeof CommonFeaturesRoute
   '/ContextMenu': typeof ContextMenuRoute
   '/CustomizableRenderers': typeof CustomizableRenderersRoute
+  '/DynamicHeightCells': typeof DynamicHeightCellsRoute
   '/HeaderFilters': typeof HeaderFiltersRoute
   '/InfiniteScrolling': typeof InfiniteScrollingRoute
   '/MasterDetail': typeof MasterDetailRoute
@@ -222,6 +229,7 @@ export interface FileRouteTypes {
     | '/CommonFeatures'
     | '/ContextMenu'
     | '/CustomizableRenderers'
+    | '/DynamicHeightCells'
     | '/HeaderFilters'
     | '/InfiniteScrolling'
     | '/MasterDetail'
@@ -245,6 +253,7 @@ export interface FileRouteTypes {
     | '/CommonFeatures'
     | '/ContextMenu'
     | '/CustomizableRenderers'
+    | '/DynamicHeightCells'
     | '/HeaderFilters'
     | '/InfiniteScrolling'
     | '/MasterDetail'
@@ -268,6 +277,7 @@ export interface FileRouteTypes {
     | '/CommonFeatures'
     | '/ContextMenu'
     | '/CustomizableRenderers'
+    | '/DynamicHeightCells'
     | '/HeaderFilters'
     | '/InfiniteScrolling'
     | '/MasterDetail'
@@ -292,6 +302,7 @@ export interface RootRouteChildren {
   CommonFeaturesRoute: typeof CommonFeaturesRoute
   ContextMenuRoute: typeof ContextMenuRoute
   CustomizableRenderersRoute: typeof CustomizableRenderersRoute
+  DynamicHeightCellsRoute: typeof DynamicHeightCellsRoute
   HeaderFiltersRoute: typeof HeaderFiltersRoute
   InfiniteScrollingRoute: typeof InfiniteScrollingRoute
   MasterDetailRoute: typeof MasterDetailRoute
@@ -377,6 +388,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CustomizableRenderersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/DynamicHeightCells': {
+      id: '/DynamicHeightCells'
+      path: '/DynamicHeightCells'
+      fullPath: '/DynamicHeightCells'
+      preLoaderRoute: typeof DynamicHeightCellsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/HeaderFilters': {
       id: '/HeaderFilters'
       path: '/HeaderFilters'
@@ -457,196 +475,6 @@ declare module '@tanstack/react-router' {
   }
 }
 
-declare module './routes/index' {
-  const createFileRoute: CreateFileRoute<
-    '/',
-    FileRoutesByPath['/']['parentRoute'],
-    FileRoutesByPath['/']['id'],
-    FileRoutesByPath['/']['path'],
-    FileRoutesByPath['/']['fullPath']
-  >
-}
-declare module './routes/AllFeatures' {
-  const createFileRoute: CreateFileRoute<
-    '/AllFeatures',
-    FileRoutesByPath['/AllFeatures']['parentRoute'],
-    FileRoutesByPath['/AllFeatures']['id'],
-    FileRoutesByPath['/AllFeatures']['path'],
-    FileRoutesByPath['/AllFeatures']['fullPath']
-  >
-}
-declare module './routes/Animation' {
-  const createFileRoute: CreateFileRoute<
-    '/Animation',
-    FileRoutesByPath['/Animation']['parentRoute'],
-    FileRoutesByPath['/Animation']['id'],
-    FileRoutesByPath['/Animation']['path'],
-    FileRoutesByPath['/Animation']['fullPath']
-  >
-}
-declare module './routes/CellNavigation' {
-  const createFileRoute: CreateFileRoute<
-    '/CellNavigation',
-    FileRoutesByPath['/CellNavigation']['parentRoute'],
-    FileRoutesByPath['/CellNavigation']['id'],
-    FileRoutesByPath['/CellNavigation']['path'],
-    FileRoutesByPath['/CellNavigation']['fullPath']
-  >
-}
-declare module './routes/ColumnGrouping' {
-  const createFileRoute: CreateFileRoute<
-    '/ColumnGrouping',
-    FileRoutesByPath['/ColumnGrouping']['parentRoute'],
-    FileRoutesByPath['/ColumnGrouping']['id'],
-    FileRoutesByPath['/ColumnGrouping']['path'],
-    FileRoutesByPath['/ColumnGrouping']['fullPath']
-  >
-}
-declare module './routes/ColumnSpanning' {
-  const createFileRoute: CreateFileRoute<
-    '/ColumnSpanning',
-    FileRoutesByPath['/ColumnSpanning']['parentRoute'],
-    FileRoutesByPath['/ColumnSpanning']['id'],
-    FileRoutesByPath['/ColumnSpanning']['path'],
-    FileRoutesByPath['/ColumnSpanning']['fullPath']
-  >
-}
-declare module './routes/ColumnsReordering' {
-  const createFileRoute: CreateFileRoute<
-    '/ColumnsReordering',
-    FileRoutesByPath['/ColumnsReordering']['parentRoute'],
-    FileRoutesByPath['/ColumnsReordering']['id'],
-    FileRoutesByPath['/ColumnsReordering']['path'],
-    FileRoutesByPath['/ColumnsReordering']['fullPath']
-  >
-}
-declare module './routes/CommonFeatures' {
-  const createFileRoute: CreateFileRoute<
-    '/CommonFeatures',
-    FileRoutesByPath['/CommonFeatures']['parentRoute'],
-    FileRoutesByPath['/CommonFeatures']['id'],
-    FileRoutesByPath['/CommonFeatures']['path'],
-    FileRoutesByPath['/CommonFeatures']['fullPath']
-  >
-}
-declare module './routes/ContextMenu' {
-  const createFileRoute: CreateFileRoute<
-    '/ContextMenu',
-    FileRoutesByPath['/ContextMenu']['parentRoute'],
-    FileRoutesByPath['/ContextMenu']['id'],
-    FileRoutesByPath['/ContextMenu']['path'],
-    FileRoutesByPath['/ContextMenu']['fullPath']
-  >
-}
-declare module './routes/CustomizableRenderers' {
-  const createFileRoute: CreateFileRoute<
-    '/CustomizableRenderers',
-    FileRoutesByPath['/CustomizableRenderers']['parentRoute'],
-    FileRoutesByPath['/CustomizableRenderers']['id'],
-    FileRoutesByPath['/CustomizableRenderers']['path'],
-    FileRoutesByPath['/CustomizableRenderers']['fullPath']
-  >
-}
-declare module './routes/HeaderFilters' {
-  const createFileRoute: CreateFileRoute<
-    '/HeaderFilters',
-    FileRoutesByPath['/HeaderFilters']['parentRoute'],
-    FileRoutesByPath['/HeaderFilters']['id'],
-    FileRoutesByPath['/HeaderFilters']['path'],
-    FileRoutesByPath['/HeaderFilters']['fullPath']
-  >
-}
-declare module './routes/InfiniteScrolling' {
-  const createFileRoute: CreateFileRoute<
-    '/InfiniteScrolling',
-    FileRoutesByPath['/InfiniteScrolling']['parentRoute'],
-    FileRoutesByPath['/InfiniteScrolling']['id'],
-    FileRoutesByPath['/InfiniteScrolling']['path'],
-    FileRoutesByPath['/InfiniteScrolling']['fullPath']
-  >
-}
-declare module './routes/MasterDetail' {
-  const createFileRoute: CreateFileRoute<
-    '/MasterDetail',
-    FileRoutesByPath['/MasterDetail']['parentRoute'],
-    FileRoutesByPath['/MasterDetail']['id'],
-    FileRoutesByPath['/MasterDetail']['path'],
-    FileRoutesByPath['/MasterDetail']['fullPath']
-  >
-}
-declare module './routes/MillionCells' {
-  const createFileRoute: CreateFileRoute<
-    '/MillionCells',
-    FileRoutesByPath['/MillionCells']['parentRoute'],
-    FileRoutesByPath['/MillionCells']['id'],
-    FileRoutesByPath['/MillionCells']['path'],
-    FileRoutesByPath['/MillionCells']['fullPath']
-  >
-}
-declare module './routes/NoRows' {
-  const createFileRoute: CreateFileRoute<
-    '/NoRows',
-    FileRoutesByPath['/NoRows']['parentRoute'],
-    FileRoutesByPath['/NoRows']['id'],
-    FileRoutesByPath['/NoRows']['path'],
-    FileRoutesByPath['/NoRows']['fullPath']
-  >
-}
-declare module './routes/ResizableGrid' {
-  const createFileRoute: CreateFileRoute<
-    '/ResizableGrid',
-    FileRoutesByPath['/ResizableGrid']['parentRoute'],
-    FileRoutesByPath['/ResizableGrid']['id'],
-    FileRoutesByPath['/ResizableGrid']['path'],
-    FileRoutesByPath['/ResizableGrid']['fullPath']
-  >
-}
-declare module './routes/RowGrouping' {
-  const createFileRoute: CreateFileRoute<
-    '/RowGrouping',
-    FileRoutesByPath['/RowGrouping']['parentRoute'],
-    FileRoutesByPath['/RowGrouping']['id'],
-    FileRoutesByPath['/RowGrouping']['path'],
-    FileRoutesByPath['/RowGrouping']['fullPath']
-  >
-}
-declare module './routes/RowsReordering' {
-  const createFileRoute: CreateFileRoute<
-    '/RowsReordering',
-    FileRoutesByPath['/RowsReordering']['parentRoute'],
-    FileRoutesByPath['/RowsReordering']['id'],
-    FileRoutesByPath['/RowsReordering']['path'],
-    FileRoutesByPath['/RowsReordering']['fullPath']
-  >
-}
-declare module './routes/ScrollToCell' {
-  const createFileRoute: CreateFileRoute<
-    '/ScrollToCell',
-    FileRoutesByPath['/ScrollToCell']['parentRoute'],
-    FileRoutesByPath['/ScrollToCell']['id'],
-    FileRoutesByPath['/ScrollToCell']['path'],
-    FileRoutesByPath['/ScrollToCell']['fullPath']
-  >
-}
-declare module './routes/TreeView' {
-  const createFileRoute: CreateFileRoute<
-    '/TreeView',
-    FileRoutesByPath['/TreeView']['parentRoute'],
-    FileRoutesByPath['/TreeView']['id'],
-    FileRoutesByPath['/TreeView']['path'],
-    FileRoutesByPath['/TreeView']['fullPath']
-  >
-}
-declare module './routes/VariableRowHeight' {
-  const createFileRoute: CreateFileRoute<
-    '/VariableRowHeight',
-    FileRoutesByPath['/VariableRowHeight']['parentRoute'],
-    FileRoutesByPath['/VariableRowHeight']['id'],
-    FileRoutesByPath['/VariableRowHeight']['path'],
-    FileRoutesByPath['/VariableRowHeight']['fullPath']
-  >
-}
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AllFeaturesRoute: AllFeaturesRoute,
@@ -658,6 +486,7 @@ const rootRouteChildren: RootRouteChildren = {
   CommonFeaturesRoute: CommonFeaturesRoute,
   ContextMenuRoute: ContextMenuRoute,
   CustomizableRenderersRoute: CustomizableRenderersRoute,
+  DynamicHeightCellsRoute: DynamicHeightCellsRoute,
   HeaderFiltersRoute: HeaderFiltersRoute,
   InfiniteScrollingRoute: InfiniteScrollingRoute,
   MasterDetailRoute: MasterDetailRoute,
