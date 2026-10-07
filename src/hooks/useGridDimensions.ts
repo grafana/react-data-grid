@@ -10,6 +10,8 @@ const initialSize: ResizeObserverSize = {
 const sizeMap = new WeakMap<RefObject<HTMLDivElement | null>, ResizeObserverSize>();
 const targetToRefMap = new WeakMap<HTMLDivElement, RefObject<HTMLDivElement | null>>();
 const subscribers = new Map<RefObject<HTMLDivElement | null>, () => void>();
+const pendingSizes = new Map<HTMLDivElement, ResizeObserverSize>();
+let animationFrame: number | null = null;
 
 // don't break in Node.js (SSR), jsdom, and environments that don't support ResizeObserver
 const resizeObserver =
@@ -21,9 +23,23 @@ function resizeObserverCallback(entries: ResizeObserverEntry[]) {
     const target = entry.target as HTMLDivElement;
 
     if (targetToRefMap.has(target)) {
-      const ref = targetToRefMap.get(target)!;
-      updateSize(ref, entry.contentBoxSize[0]);
+      pendingSizes.set(target, entry.contentBoxSize[0]);
     }
+  }
+
+  // Synchronous store notifications can change layout during ResizeObserver delivery.
+  if (pendingSizes.size > 0 && animationFrame === null) {
+    animationFrame = requestAnimationFrame(() => {
+      animationFrame = null;
+      const sizes = new Map(pendingSizes);
+      pendingSizes.clear();
+      for (const [target, size] of sizes) {
+        const ref = targetToRefMap.get(target);
+        if (ref !== undefined) {
+          updateSize(ref, size);
+        }
+      }
+    });
   }
 }
 
@@ -80,6 +96,12 @@ export function useGridDimensions(gridRef: React.RefObject<HTMLDivElement | null
 
     return () => {
       resizeObserver?.unobserve(target);
+      targetToRefMap.delete(target);
+      pendingSizes.delete(target);
+      if (pendingSizes.size === 0 && animationFrame !== null) {
+        cancelAnimationFrame(animationFrame);
+        animationFrame = null;
+      }
     };
   }, [gridRef]);
 
